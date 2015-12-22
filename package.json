@@ -8,5 +8,8 @@
   "dependencies": {
     "livescript": "^1.4.0",
     "sylvester": "0.0.21"
+  },
+  "scripts": {
+    "compile": "lsc -co lib src && browserify --ignore lapack lib/client/game.js > public/game.js"
   }
 }
