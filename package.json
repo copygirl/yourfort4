@@ -6,6 +6,7 @@
   "repository": "copygirl/yourfort4",
   "license": "MIT",
   "dependencies": {
+    "livescript": "^1.4.0",
     "sylvester": "0.0.21"
   }
 }
