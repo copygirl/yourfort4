@@ -1,0 +1,13 @@
+{
+  "loading-screen": {
+    "shaders": [
+      "default.vs",
+      "default.fs"
+    ]
+  },
+  "game": {
+    "sprites": [
+      "block"
+    ]
+  }
+}

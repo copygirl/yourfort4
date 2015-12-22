@@ -1,0 +1,6 @@
+@echo off
+echo Compiling LiveScript to JavaScript (src ^> lib) ...
+call lsc -co lib src
+echo Browserifying scripts (lib/client/game.js ^> public/game.js) ...
+call browserify --ignore lapack lib/client/game.js > public/game.js
+echo Done!
