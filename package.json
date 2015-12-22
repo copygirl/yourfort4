@@ -3,6 +3,7 @@
   "version": "0.0.0",
   "description": "",
   "author": "copygirl",
+  "repository": "copygirl/yourfort4",
   "license": "MIT",
   "dependencies": {
     "sylvester": "0.0.21"
