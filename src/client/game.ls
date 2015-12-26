@@ -2,8 +2,9 @@ require! {
   "../common/entity": Entity
   "../common/block": Block
   "./input": Input
-  "./graphics": Graphics
   "./assets": Assets
+  "./graphics": Graphics
+  "./client": Client
 }
 
 window.request-animation-frame ?= set-timeout _, 33
@@ -13,6 +14,7 @@ export class Game
     @input = new Input this
     @assets = new Assets this
     @graphics = new Graphics this, @canvas, size, scale
+    @client = new Client this
     
     @next-entity-id = 1
     @entities = { }
@@ -24,6 +26,7 @@ export class Game
     @graphics.init!
     @update!
     <~! @assets.load "game"
+    @client.connect!
   
   update: !->
     @graphics.render!
