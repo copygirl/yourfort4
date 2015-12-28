@@ -1,7 +1,7 @@
 module.exports = class Entity
-  (@game) ->
-    @id = @game.next-entity-id++
-    @game.entities[@id] = this
+  ->
+    @game = null
+    @id = null
     
     @pos = [0, 0]
     @size = [0, 0]
