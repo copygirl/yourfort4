@@ -24,9 +24,13 @@ export class Game
   add: (entity) !->
     if entity.id?
       throw new Error "Entity #entity already spawned"
+    
     entity.game = this
     entity.id = @next-entity-id++
     @entities[id] = entity
+    
+    if entity.renderer?
+      @entities-renderable[entity.id] = entity
   
   remove: (entity) !->
     if entity.game != this
