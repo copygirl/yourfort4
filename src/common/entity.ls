@@ -22,3 +22,6 @@ module.exports = class Entity
         else if renderer?
           delete @game.entities-renderable[@id]
         renderer := value
+  
+  to-string: ->
+    (typeof! this) + (if !@id? then " (#{@id})" else "")
