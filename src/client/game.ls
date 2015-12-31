@@ -1,42 +1,22 @@
 require! {
+  events: { EventEmitter }
+  "../common/main": Main
   "../common/entity": Entity
   "../common/block": Block
+  "../common/network/side": Side
   "./input": Input
   "./assets": Assets
   "./graphics": Graphics
   "./client": Client
 }
 
-window.request-animation-frame ?= set-timeout _, 33
 
-export class Game
+export class Game extends Main
   (@canvas, size, scale) ->
+    super Side.CLIENT
     @input = new Input this
     @assets = new Assets this
     @graphics = new Graphics this, @canvas, size, scale
-    @client = new Client this
-    
-    @next-entity-id = 1
-    @entities = { }
-    @entities-renderable = { }
-    @entities-collidable = { }
-  
-  add: (entity) !->
-    if entity.id?
-      throw new Error "Entity #entity already spawned"
-    
-    entity.game = this
-    entity.id = @next-entity-id++
-    @entities[id] = entity
-    
-    if entity.renderer?
-      @entities-renderable[entity.id] = entity
-  
-  remove: (entity) !->
-    if entity.game != this
-      throw new Error "Entity #entity not spawned"
-    entity.game = entity.id = null
-    delete @entities[id]
   
   run: (fps) !->
     <~! @assets.load "loading-screen"
