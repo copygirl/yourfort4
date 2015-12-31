@@ -7,26 +7,36 @@ require! {
   "./glUtils"
 }
 
+
+create-webGL-context = (canvas) ->
+  gl = try (canvas.get-context \webgl) ? canvas.get-context \experimental-webgl
+  if !gl? then throw Error "Couldn't create WebGL context"
+  if WebGLDebugUtils? then gl = WebGLDebugUtils.make-debug-context gl
+
+
 module.exports = class Graphics
   (@game, @canvas, size = [450, 275], scale = 2) ->
-    @gl = try (@canvas.get-context \webgl) ? @canvas.get-context \experimental-webgl
-    if !@gl? then throw Error "Couldn't create WebGL context"
+    @gl = create-webGL-context @canvas
     
-    if WebGLDebugUtils?
-      @gl = WebGLDebugUtils.make-debug-context @gl
-    
+    @matrix-stack = [ ]
     @proj-matrix = null
     @view-matrix = Matrix.I 4
     @resize size, scale
     
-    @matrix-stack = [ ]
-    
     @renderers =
       sprite: new renderers.SpriteRenderer this
+    
+    @entities = {  }
+    @game.on \spawn, (entity) !~>
+      if entity.renderer?
+        @entities[entity.id] = entity
+    @game.on \despawn, (entity) !~>
+      delete! @entities[entity.id]
+  
   
   size:~
     -> @canvas<[width height]>
-    (size) -> @resize size @scale
+    (size) -> @resize size, @scale
   
   scale:~
     -> @canvas.client-width / @canvas.width
@@ -38,6 +48,7 @@ module.exports = class Graphics
     @canvas.style.height = "#{ size[1] * scale }px"
     @gl.viewport 0, 0, @canvas.width, @canvas.height
     @proj-matrix = gl-utils.make-ortho 0, @canvas.width, @canvas.height, 0, -128, 128
+  
   
   init: !->
     @gl.enable @gl.DEPTH_TEST
@@ -53,6 +64,7 @@ module.exports = class Graphics
     for attr in <[ aVertexPosition aTextureCoord ]>
       @program.attribute attr
   
+  
   push: (matrix) !->
     matrix ?= @view-matrix.dup!
     @matrix-stack.push @view-matrix
@@ -63,6 +75,7 @@ module.exports = class Graphics
       throw new Error "Attempting to pop empty matrix stack"
     @view-matrix = @matrix-stack.pop!
   
+  
   render: !->
     @gl.clear-color 0, 0, 0, 1
     @gl.clear @gl.COLOR_BUFFER_BIT .|. @gl.DEPTH_BUFFER_BIT
@@ -70,5 +83,5 @@ module.exports = class Graphics
     @program.uniforms.uPMatrix.setf @proj-matrix
     @program.uniforms.uMVMatrix.setf @view-matrix
     
-    for id, entity of @game.entities-renderable
+    for id, entity of @entities
       @renderers[entity.renderer]?.render entity
