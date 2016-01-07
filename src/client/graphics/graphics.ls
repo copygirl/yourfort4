@@ -1,5 +1,6 @@
 require! {
   sylvester: { Matrix }
+  "../../common/entity": Entity
   "./shader": Shader
   "./program": Program
   "./buffer": Buffer
@@ -12,6 +13,11 @@ create-webGL-context = (canvas) ->
   gl = try (canvas.get-context \webgl) ? canvas.get-context \experimental-webgl
   if !gl? then throw Error "Couldn't create WebGL context"
   if WebGLDebugUtils? then gl = WebGLDebugUtils.make-debug-context gl
+
+Object.define-properties Entity::,
+  renderer: value: null, writable: true
+  sprite:   value: null, writable: true
+  color:    value: [1, 1, 1, 1], writable: true
 
 
 module.exports = class Graphics
@@ -26,12 +32,12 @@ module.exports = class Graphics
     @renderers =
       sprite: new renderers.SpriteRenderer this
     
-    @entities = {  }
+    @renderable = { }
     @game.on \spawn, (entity) !~>
       if entity.renderer?
-        @entities[entity.id] = entity
+        @renderable[entity.id] = entity
     @game.on \despawn, (entity) !~>
-      delete! @entities[entity.id]
+      delete! @renderable[entity.id]
   
   
   size:~
@@ -85,5 +91,5 @@ module.exports = class Graphics
     @program.uniforms.uPMatrix.setf @proj-matrix
     @program.uniforms.uMVMatrix.setf @view-matrix
     
-    for id, entity of @entities
+    for id, entity of @renderable
       @renderers[entity.renderer]?.render entity
