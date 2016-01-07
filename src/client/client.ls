@@ -41,13 +41,7 @@ module.exports = class Client implements EventEmitter::
     
     @socket.add-event-listener \message, ({ data }) !~>
       Packet.parse @game, data, Side.CLIENT
-    
-    @socket.add-event-listener \error, (err) !~>
-      console.error err
-      if !@connected then return
-      @connected = false
-      @emit \disconnect, "#err"
   
-  disconnect: (reason = "DISCONNECT") !->
+  disconnect: (reason) !->
     if !@socket? then throw new Error "Not connected"
-    @socket.close reason
+    @socket.close 1000, reason
