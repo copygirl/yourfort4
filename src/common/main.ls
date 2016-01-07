@@ -7,7 +7,7 @@ module.exports = class Main implements EventEmitter::
     @next-entity-id = 1
   
   add: (entity) !->
-    if entity.main?
+    if entity.spawned
       throw new Error "Entity #entity already spawned"
     
     entity.main = this

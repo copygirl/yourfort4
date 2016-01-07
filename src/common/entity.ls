@@ -13,5 +13,7 @@ module.exports = class Entity
     @sprite = null
     @color = [1, 1, 1, 1]
   
+  spawned:~ -> @id?
+  
   to-string: ->
-    (typeof! this) + (if !@id? then " (#{@id})" else "")
+    "[" + typeof! this + (if !@id? then " (#{@id})" else "") + "]"

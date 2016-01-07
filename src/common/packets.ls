@@ -27,15 +27,13 @@ PacketType.define 2, \spawn, Side.CLIENT,
     * x: \int
     * y: \int
   (game, { id, type, x, y }) !->
-    if game.client.entities[id]?
+    if game.client.tracking[id]?
       throw new Error "Spawned entity '#id' multiple times"
-    entity = new Block! <<< network-id: id, pos: [x, y]
-    game.client.entities[id] = entity
-    game.add entity
+    game.add new Block! <<< network-id: id, pos: [x, y]
 
 PacketType.define 3, \despawn, Side.CLIENT,
   [ id: \uint ]
   (game, { id }) !->
-    entity = delete game.client.entities[id]
-    if !entity? then throw new Error "Despawning unknown entity '#id'"
+    if !(entity = game.client.tracking[id])?
+      throw new Error "Despawning unknown entity '#id'"
     game.remove entity

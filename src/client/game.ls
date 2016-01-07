@@ -21,7 +21,7 @@ export class Game extends Main
     @client = new Client this
   
   player:~
-    -> @client.entities[@client.own-id]
+    -> @client.tracking[@client.own-id]
   
   run: (fps) !->
     <~! @assets.load "loading-screen"
@@ -45,6 +45,5 @@ game.client.on \disconnect, (reason) !-> console.log "Disconnected (#reason)"
 game.client.on \login, !->
   console.log "Logged in with ID '#{game.client.own-id}'"
   game.add player = new Player! <<< network-id: game.client.own-id
-  game.client.entities[game.client.own-id] = player
 
 game.run 30

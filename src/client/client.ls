@@ -1,12 +1,16 @@
 require! {
   events: { EventEmitter }
   "../common/packets"
+  "../common/entity": Entity
   "../common/network/packet": Packet
   "../common/network/side": Side
 }
 
 
 url = "ws://localhost:42006/"
+
+Object.define-property Entity::, "network-id", value: null
+Object.define-property Entity::, "networked", get: -> @network-id?
 
 
 module.exports = class Client implements EventEmitter::
@@ -16,10 +20,16 @@ module.exports = class Client implements EventEmitter::
     @connected = false
     @own-id = null
     
-    @entities = { }
+    @tracking = { }
+    
+    @game.on \spawn, (entity) !~>
+      if entity.networked
+        @tracking[entity.network-id] = entity
+    @game.on \despawn, (entity) !~>
+      if entity.networked
+        delete @tracking[entity.network-id]
   
-  logged-in:~
-    -> (@connected && @own-id?)
+  logged-in:~ -> (@connected && @own-id?)
   
   send: (packet-type, payload) !->
     if !@connected then throw new Error "Not connected"
