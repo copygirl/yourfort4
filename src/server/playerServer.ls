@@ -4,8 +4,9 @@ require! {
   "../common/network/side": Side
 }
 
-module.exports = class PlayerServer
+module.exports = class PlayerServer extends Player
   (@socket) ->
+    super!
     @connected = true
     @logged-in = false
     set-timeout do

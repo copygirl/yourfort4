@@ -2,9 +2,9 @@ require! "./entity": Entity
 
 module.exports = class Block extends Entity
   ->
-    super ...
+    super!
     @size = [16, 16]
     @solid = true
     
-    @renderer = "sprite"
-    @sprite = "block"
+    @renderer = \sprite
+    @sprite = \block
