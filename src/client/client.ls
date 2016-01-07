@@ -9,8 +9,9 @@ require! {
 
 url = "ws://localhost:42006/"
 
-Object.define-property Entity::, "network-id", value: null
-Object.define-property Entity::, "networked", get: -> @network-id?
+Object.define-properties Entity::,
+  network-id: value: null, writable: true
+  networked:  get: -> @network-id?
 
 
 module.exports = class Client implements EventEmitter::
@@ -26,8 +27,7 @@ module.exports = class Client implements EventEmitter::
       if entity.networked
         @tracking[entity.network-id] = entity
     @game.on \despawn, (entity) !~>
-      if entity.networked
-        delete @tracking[entity.network-id]
+      delete! @tracking[entity.network-id]
   
   logged-in:~ -> (@connected && @own-id?)
   
