@@ -1,6 +1,6 @@
 module.exports = class Entity
   ->
-    @game = null
+    @main = null
     @id = null
     
     @pos = [0, 0]

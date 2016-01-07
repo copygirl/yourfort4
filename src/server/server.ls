@@ -1,28 +1,48 @@
 require! {
   ws: { Server: WebSocketServer }
+  "../common/packets"
   "../common/main": Main
   "../common/block": Block
+  "../common/network/packet": Packet
   "../common/network/side": Side
+  "./playerServer": PlayerServer
 }
 
 module.exports = class Server extends Main
   (@port) ->
     super Side.SERVER
+    @clients = { }
   
   start: ->
     @wss = new WebSocketServer port: @port
-    @wss.on \connection, (ws) !~>
-      console.log "'#ws' connected"
-      ws.on \message, (message) !~>
-        console.log "'#ws' sent: #message"
-      ws.on \close, (code, message) !~>
-        console.log "'#ws' disconnected: #message"
+    @wss.on \connection, (socket) !~>
+      player = new PlayerServer socket
+      @add player
+      @clients[player.id] = player
+      @emit \connect, player
+      
+      socket.on \message, (data) !->
+        Packet.parse player, data, Side.SERVER
+      
+      socket.on \close, (code, reason) !~>
+        @emit \disconnect, player
+        @remove player
+        delete @clients[player.id]
   
   stop: (reason = "Shutting down ...") ->
     ...
 
 
 server = new Server 42006
+
+server.on \connect, (player) !-> console.log "#{player.id} connected"
+server.on \disconnect, (player) !-> console.log "#{player.id} disconnected"
+
+server.on \login, (player) !->
+  console.log "#{player.id} logged in"
+  for id, entity of server.entities
+    if entity instanceof Block
+      player.send \spawn, { entity.id, type: 0, x: entity.pos[0], y: entity.pos[1] }
 
 for x from 16 til 240 by 16
   server.add new Block! <<< pos: [x, 16], color: [1, 0, 0, 1]

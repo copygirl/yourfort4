@@ -32,4 +32,9 @@ export class Game extends Main
 <- window.add-event-listener "load"
 canvas = document.get-element-by-id \game
 game = window.game = new Game canvas
+
+game.client.on \connect, !-> console.log "Connected"
+game.client.on \disconnect, (reason) !-> console.log "Disconnected (#reason)"
+game.client.on \login, !-> console.log "Logged in with ID '#{game.client.own-id}'"
+
 game.run 30

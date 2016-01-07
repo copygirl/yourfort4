@@ -1,6 +1,4 @@
-require! {
-  "./graphics": { Shader, Texture }
-}
+require! "./graphics": { Shader, Texture }
 
 resource-handlers =
   
