@@ -23,17 +23,16 @@ export class Game extends Main
   player:~
     -> @client.tracking[@client.own-id]
   
-  run: (fps) !->
+  run: (fps = 30) !->
     <~! @assets.load "loading-screen"
     @graphics.init!
-    @update!
     <~! @assets.load "game"
+    @emit \ready
+    set-interval @~update, 1000 / fps
     @client.connect!
   
   update: !->
     @controller.update!
-    @graphics.render!
-    request-animation-frame @~update
 
 
 <- window.add-event-listener "load"
@@ -46,4 +45,4 @@ game.client.on \login, !->
   console.log "Logged in with ID '#{game.client.own-id}'"
   game.add player = new Player! <<< network-id: game.client.own-id
 
-game.run 30
+game.run!

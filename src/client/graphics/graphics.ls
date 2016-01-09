@@ -71,6 +71,8 @@ module.exports = class Graphics
       @program.uniform uniform
     for attr in <[ aVertexPosition aTextureCoord ]>
       @program.attribute attr
+    
+    request-animation-frame @~render
   
   
   push: (matrix) !->
@@ -93,3 +95,5 @@ module.exports = class Graphics
     
     for id, entity of @renderable
       @renderers[entity.renderer]?.render entity
+    
+    request-animation-frame @~render
