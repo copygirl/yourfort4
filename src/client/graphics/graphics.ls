@@ -29,6 +29,8 @@ module.exports = class Graphics
     @view-matrix = Matrix.I 4
     @resize size, scale
     
+    @background = [0.0675, 0.125, 0.25, 1]
+    
     @renderers =
       sprite: new renderers.SpriteRenderer this
     
@@ -87,7 +89,7 @@ module.exports = class Graphics
   
   
   render: !->
-    @gl.clear-color 0, 0, 0, 1
+    @gl.clear-color ...@background
     @gl.clear @gl.COLOR_BUFFER_BIT .|. @gl.DEPTH_BUFFER_BIT
     
     @program.uniforms.uPMatrix.setf @proj-matrix
