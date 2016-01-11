@@ -98,4 +98,11 @@ module.exports = class Graphics
     for id, entity of @renderable
       @renderers[entity.renderer]?.render entity
     
+    if @game.input.mouse.inside
+      @renderers.sprite.render do
+        sprite: \cursor
+        pos:    @game.input.mouse
+        size:   [15, 15]
+        color:  [1, 1, 1, 1]
+    
     request-animation-frame @~render
