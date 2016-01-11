@@ -7,7 +7,7 @@ keys =
 
 module.exports = class Input
   (@game) ->
-    @mouse = [0, 0] <<< inside: false
+    @mouse = [ 0, 0 ] <<< inside: false
     window.add-event-listener \mousemove, (ev) !~>
       rect = @game.canvas.get-bounding-client-rect!
       @mouse =

@@ -46,7 +46,7 @@ module.exports = class Buffer
         data = [].concat ...data
       if data[0]?.elements?
         size *= data[0].elements.length
-        data = [..flatten! for data]
+        data = [ ..flatten! for data ]
       @pointer-size ?= size
       
       data = switch @pointer-type

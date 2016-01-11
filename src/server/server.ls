@@ -45,10 +45,10 @@ server.on \login, (player) !->
       player.send \spawn, { entity.id, type: 0, x: entity.pos[0], y: entity.pos[1] }
 
 for x from 16 til 240 by 16
-  server.add new Block! <<< pos: [x, 16], color: [1, 0, 0, 1]
-  server.add new Block! <<< pos: [x, 160 - 16], color: [0, 1, 0, 1]
+  server.add new Block! <<< pos: [ x,       16 ], color: [ 1, 0, 0, 1 ]
+  server.add new Block! <<< pos: [ x, 160 - 16 ], color: [ 0, 1, 0, 1 ]
 for y from 32 til 160 - 16 by 16
-  server.add new Block! <<< pos: [16, y], color: [0, 0, 1, 1]
-  server.add new Block! <<< pos: [240 - 16, y], color: [1, 1, 0, 1]
+  server.add new Block! <<< pos: [       16, y ], color: [ 0, 0, 1, 1 ]
+  server.add new Block! <<< pos: [ 240 - 16, y ], color: [ 1, 1, 0, 1 ]
 
 server.start!

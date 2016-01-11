@@ -49,7 +49,7 @@ module.exports = class Assets
       folder = "assets/#type"
       assets-group = @[type] = { }
       
-      for let name in assets[type] ? []
+      for let name in assets[type] ? [ ]
         num-assets++
         
         (err, asset) <-! handler game, name, folder

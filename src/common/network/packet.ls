@@ -29,7 +29,7 @@ module.exports = class Packet
       | data instanceof Uint8Array => new DataView data.buffer, data.byte-offset, data.byte-length
       | _ => throw new Error "Expected ArrayBuffer or Uint8Array, got '#{ typeof! data }'"
     
-    [packet-type, payload] = reader.read view, side
+    [ packet-type, payload ] = reader.read view, side
     
     packet-type.exec target, payload
     # catch then throw new Error do

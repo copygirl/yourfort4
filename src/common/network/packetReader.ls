@@ -23,11 +23,11 @@ module.exports = class PacketReader
     payload = { }
     index = 1
     try
-      for [name, data-type] in packet-type.payload
-        [value, size] = data-type.read view, index
+      for [ name, data-type ] in packet-type.payload
+        [ value, size ] = data-type.read view, index
         payload[name] = value
         index += size
     catch then throw new Error do
       "Error while reading packet #packet-type:\n#e"
     
-    [packet-type, payload]
+    [ packet-type, payload ]

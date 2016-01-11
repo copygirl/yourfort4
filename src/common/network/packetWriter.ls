@@ -21,7 +21,7 @@ module.exports = class PacketWriter
     
     index = 1
     try
-      for [name, data-type] in packet-type.payload
+      for [ name, data-type ] in packet-type.payload
         index += data-type.write view, index, payload[name]
     catch then throw new Error do
       "Error while writing packet #packet-type:\n#e"

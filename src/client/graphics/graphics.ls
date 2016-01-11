@@ -17,11 +17,11 @@ create-webGL-context = (canvas) ->
 Object.define-properties Entity::,
   renderer: value: null, writable: true
   sprite:   value: null, writable: true
-  color:    value: [1, 1, 1, 1], writable: true
+  color:    value: [ 1, 1, 1, 1 ], writable: true
 
 
 module.exports = class Graphics
-  (@game, @canvas, size = [450, 275], scale = 2) ->
+  (@game, @canvas, size = [ 450, 275 ], scale = 2) ->
     @gl = create-webGL-context @canvas
     
     @matrix-stack = [ ]
@@ -29,7 +29,7 @@ module.exports = class Graphics
     @view-matrix = Matrix.I 4
     @resize size, scale
     
-    @background = [0.0675, 0.125, 0.25, 1]
+    @background = [ 0.0675, 0.125, 0.25, 1 ]
     
     @renderers =
       sprite: new renderers.SpriteRenderer this
@@ -48,7 +48,7 @@ module.exports = class Graphics
   
   scale:~
     -> @canvas.client-width / @canvas.width
-    (scale) -> @resize @canvas<[width height]>, scale
+    (scale) -> @resize @canvas<[ width height ]>, scale
   
   resize: (size, scale) !->
     @canvas<[width height]> = size
@@ -66,7 +66,7 @@ module.exports = class Graphics
     @gl.active-texture @gl.TEXTURE0
     
     @program = new Program this,
-      ...@game.assets.shaders["default.vs", "default.fs"]
+      ...@game.assets.shaders[ "default.vs", "default.fs" ]
     @program.use!
     
     for uniform in <[ uPMatrix uMVMatrix uColor uSampler ]>
@@ -102,7 +102,7 @@ module.exports = class Graphics
       @renderers.sprite.render do
         sprite: \cursor
         pos:    @game.input.mouse
-        size:   [15, 15]
-        color:  [1, 1, 1, 1]
+        size:   [ 15, 15 ]
+        color:  [ 1, 1, 1, 1 ]
     
     request-animation-frame @~render

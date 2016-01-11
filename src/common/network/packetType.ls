@@ -27,7 +27,7 @@ module.exports = class PacketType
     for field, i in @payload
       for name, data-type of field
         data-type = DataType.find-or-throw data-type
-        @payload[i] = [name, data-type]
+        @payload[i] = [ name, data-type ]
         if @size?
           if typeof! data-type.size == \Number
             @size += data-type.size
@@ -42,7 +42,7 @@ module.exports = class PacketType
   get-size: (payload) ->
     if @size? then return @size
     size = 0
-    for [name, data-type] in @payload
+    for [ name, data-type ] in @payload
       size += data-type.get-size @payload[name]
     size
   
@@ -51,7 +51,7 @@ module.exports = class PacketType
   verify: (payload) !->
     if Object.keys(payload).length > Object.keys(@payload).length
       throw new Error "Invalid payload for #this: Too many fields"
-    for [name, data-type] in @payload
+    for [ name, data-type ] in @payload
       value = payload[name]
       if !value? then throw new Error do
         "Invalid payload for #this: Missing field '#name'"

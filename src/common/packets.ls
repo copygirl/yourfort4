@@ -29,7 +29,7 @@ PacketType.define 2, \spawn, Side.CLIENT,
   (game, { id, type, x, y }) !->
     if game.client.tracking[id]?
       throw new Error "Spawned entity '#id' multiple times"
-    game.add new Block! <<< network-id: id, pos: [x, y]
+    game.add new Block! <<< network-id: id, pos: [ x, y ]
 
 PacketType.define 3, \despawn, Side.CLIENT,
   [ id: \uint ]
