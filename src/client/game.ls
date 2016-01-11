@@ -10,7 +10,6 @@ require! {
   "./client": Client
 }
 
-
 export class Game extends Main
   (@canvas, size, scale) ->
     super Side.CLIENT
@@ -19,6 +18,11 @@ export class Game extends Main
     @assets = new Assets this
     @graphics = new Graphics this, @canvas, size, scale
     @client = new Client this
+    
+    # Using a web worker, we can avoid set-interval running at
+    # crippled speed when the tab is in the background. Justice!
+    @worker = new Worker "worker.js"
+    @worker.add-event-listener \message, @~update
   
   player:~
     -> @client.tracking[@client.own-id]
@@ -28,7 +32,7 @@ export class Game extends Main
     @graphics.init!
     <~! @assets.load "game"
     @emit \ready
-    set-interval @~update, 1000 / fps
+    @worker.post-message 1000 / fps
     @client.connect!
   
   update: !->
