@@ -1,5 +1,5 @@
 module.exports = class DataType
-  # read: (view, index) => [value, size]
+  # read: (view, index) => [ value, size ]
   # write: (view, index, value) => size
   # size: Number or (value) => size
   # verify: (value) => [ throws error if invalid ]
