@@ -1,7 +1,6 @@
 require! {
-  "./packet": Packet
-  "./packetType": PacketType
   "./side": Side
+  "./packet": Packet
 }
 
 module.exports = class PacketWriter

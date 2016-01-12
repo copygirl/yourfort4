@@ -2,7 +2,7 @@ module.exports = class DataType
   # read: (view, index) => [ value, size ]
   # write: (view, index, value) => size
   # size: Number or (value) => size
-  # verify: (value) => [ throws error if invalid ]
+  # verify: (value) => <throws error if invalid>
   (@name, @read, @write, @size, @verify) ->
     if @@[@name]? then throw new Error do
       "Data type '#{@name}' already defined"

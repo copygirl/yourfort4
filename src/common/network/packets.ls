@@ -1,7 +1,7 @@
 require! {
-  "../common/block": Block
-  "./network/packetType": PacketType
-  "./network/side": Side
+  "../../common/block": Block
+  "./side": Side
+  "./packetType": PacketType
 }
 
 PacketType.define 0, \login, Side.SERVER,

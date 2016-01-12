@@ -1,6 +1,6 @@
 require! {
-  "./dataType": DataType
   "./side": Side
+  "./dataType": DataType
 }
 
 

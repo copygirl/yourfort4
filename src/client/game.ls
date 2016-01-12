@@ -2,7 +2,7 @@ require! {
   events: { EventEmitter }
   "../common/main": Main
   "../common/player": Player
-  "../common/network/side": Side
+  "../common/network": { Side }
   "./input": Input
   "./controller": Controller
   "./assets": Assets

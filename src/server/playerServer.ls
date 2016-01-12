@@ -1,7 +1,6 @@
 require! {
   "../common/player": Player
-  "../common/network/packet": Packet
-  "../common/network/side": Side
+  "../common/network": { Side, Packet }
 }
 
 module.exports = class PlayerServer extends Player

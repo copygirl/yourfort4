@@ -1,8 +1,7 @@
-module.exports = require "./graphics"
-module.exports <<<
-  Shader: require "./shader"
-  Program: require "./program"
-  Uniform: require "./uniform"
+module.exports = (require "./graphics") <<<
+  Shader:    require "./shader"
+  Program:   require "./program"
+  Uniform:   require "./uniform"
   Attribute: require "./attribute"
-  Buffer: require "./buffer"
-  Texture: require "./texture"
+  Buffer:    require "./buffer"
+  Texture:   require "./texture"

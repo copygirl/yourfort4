@@ -1,8 +1,7 @@
 require! {
-  "./packet": Packet
-  "./packetType": PacketType
-  "./dataType": DataType
   "./side": Side
+  "./packetType": PacketType
+  "./packet": Packet
 }
 
 module.exports = class PacketReader

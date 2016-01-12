@@ -1,9 +1,7 @@
 require! {
   events: { EventEmitter }
-  "../common/packets"
   "../common/entity": Entity
-  "../common/network/packet": Packet
-  "../common/network/side": Side
+  "../common/network": { Packet, Side }
 }
 
 

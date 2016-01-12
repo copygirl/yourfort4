@@ -1,10 +1,8 @@
 require! {
   ws: { Server: WebSocketServer }
-  "../common/packets"
   "../common/main": Main
   "../common/block": Block
-  "../common/network/packet": Packet
-  "../common/network/side": Side
+  "../common/network": { Side, Packet }
   "./playerServer": PlayerServer
 }
 
