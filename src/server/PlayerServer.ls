@@ -1,5 +1,5 @@
 require! {
-  "../common/player": Player
+  "../common/Player"
   "../common/network": { Side, Packet }
 }
 

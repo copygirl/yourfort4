@@ -1,6 +1,6 @@
 require! {
-  "./uniform": Uniform
-  "./attribute": Attribute
+  "./Uniform"
+  "./Attribute"
 }
 
 module.exports = class Program

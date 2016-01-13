@@ -1,13 +1,13 @@
 require! {
   events: { EventEmitter }
-  "../common/main": Main
-  "../common/player": Player
+  "../common/Main"
+  "../common/Player"
   "../common/network": { Side }
-  "./input": Input
-  "./controller": Controller
-  "./assets": Assets
-  "./graphics": Graphics
-  "./client": Client
+  "./Input"
+  "./Controller"
+  "./Client"
+  "./Assets"
+  "./graphics": { Graphics }
 }
 
 export class Game extends Main
@@ -15,9 +15,9 @@ export class Game extends Main
     super Side.CLIENT
     @input = new Input this
     @controller = new Controller this
+    @client = new Client this
     @assets = new Assets this
     @graphics = new Graphics this, @canvas, size, scale
-    @client = new Client this
     
     # Using a web worker, we can avoid set-interval running at
     # crippled speed when the tab is in the background. Justice!

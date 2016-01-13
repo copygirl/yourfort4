@@ -1,7 +1,7 @@
 require! {
-  "./packetType": PacketType
-  "./packetReader": PacketReader
-  "./packetWriter": PacketWriter
+  "./PacketType"
+  "./PacketReader"
+  "./PacketWriter"
 }
 
 reader = new PacketReader!

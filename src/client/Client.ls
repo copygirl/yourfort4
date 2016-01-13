@@ -1,6 +1,6 @@
 require! {
   events: { EventEmitter }
-  "../common/entity": Entity
+  "../common/Entity"
   "../common/network": { Packet, Side }
 }
 

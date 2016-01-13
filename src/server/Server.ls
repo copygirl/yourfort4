@@ -1,9 +1,9 @@
 require! {
   ws: { Server: WebSocketServer }
-  "../common/main": Main
-  "../common/block": Block
+  "../common/Main"
+  "../common/Block"
   "../common/network": { Side, Packet }
-  "./playerServer": PlayerServer
+  "./PlayerServer"
 }
 
 module.exports = class Server extends Main

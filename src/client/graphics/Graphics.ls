@@ -1,9 +1,9 @@
 require! {
   sylvester: { Matrix }
-  "../../common/entity": Entity
-  "./shader": Shader
-  "./program": Program
-  "./buffer": Buffer
+  "../../common/Entity"
+  "./Shader"
+  "./Program"
+  "./Buffer"
   "./renderers"
   "./glUtils"
 }
@@ -32,7 +32,7 @@ module.exports = class Graphics
     @background = [ 0.0675, 0.125, 0.25, 1 ]
     
     @renderers =
-      sprite: new renderers.SpriteRenderer this
+      sprite: new renderers.Sprite this
     
     @renderable = { }
     @game.on \spawn, (entity) !~>

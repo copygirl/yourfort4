@@ -1,1 +1,1 @@
-export SpriteRenderer = require "./sprite"
+export Sprite = require "./SpriteRenderer"

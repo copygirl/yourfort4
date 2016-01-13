@@ -1,4 +1,4 @@
-require! "./entity": Entity
+require! "./Entity"
 
 module.exports = class Player extends Entity
   ->

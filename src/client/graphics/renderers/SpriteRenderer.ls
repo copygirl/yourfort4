@@ -1,6 +1,6 @@
 require! {
   sylvester: { Matrix }
-  "../buffer": Buffer
+  "../Buffer"
 }
 
 module.exports = class SpriteRenderer

@@ -1,9 +1,9 @@
 export Side         = require "./Side"
-export DataType     = require "./dataType"
-export PacketType   = require "./packetType"
-export Packet       = require "./packet"
-export PacketReader = require "./packetReader"
-export PacketWriter = require "./packetWriter"
+export DataType     = require "./DataType"
+export PacketType   = require "./PacketType"
+export Packet       = require "./Packet"
+export PacketReader = require "./PacketReader"
+export PacketWriter = require "./PacketWriter"
 
 # Initializes packet types.
-require! "./packets"
+require "./packets"
