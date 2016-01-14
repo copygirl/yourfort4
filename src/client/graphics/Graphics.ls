@@ -14,10 +14,10 @@ create-webGL-context = (canvas) ->
   if !gl? then throw Error "Couldn't create WebGL context"
   if WebGLDebugUtils? then gl = WebGLDebugUtils.make-debug-context gl
 
-Object.define-properties Entity::,
-  renderer: value: null, writable: true
-  sprite:   value: null, writable: true
-  color:    value: [ 1, 1, 1, 1 ], writable: true
+Entity:: <<<
+  renderer: null
+  sprite:   null
+  color:    [ 1, 1, 1, 1 ]
 
 
 module.exports = class Graphics
@@ -95,7 +95,7 @@ module.exports = class Graphics
     @program.uniforms.uPMatrix.setf @proj-matrix
     @program.uniforms.uMVMatrix.setf @view-matrix
     
-    for id, entity of @renderable
+    for _, entity of @renderable
       @renderers[entity.renderer]?.render entity
     
     if @game.input.mouse.inside

@@ -16,9 +16,8 @@ module.exports = class DataType
   @find = (name) -> @@[name]
   
   @find-or-throw = (name) ->
-    if !(type = @@[name])?
-      throw new Error "Unknown data type '#name'"
-    type
+    if (type = @@[name])? then type
+    else throw new Error "Unknown data type '#name'"
   
   @define = -> new DataType ...
 
