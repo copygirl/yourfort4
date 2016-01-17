@@ -11,7 +11,7 @@ update-entity-collider = (e) !->
 
 Entity:: <<<
   speed:   [ 0, 0 ]
-  gravity: [ 0, 0.1 ]
+  gravity: [ 0, 240 ]
   solid:   false
   
   _physics: false
@@ -71,16 +71,17 @@ module.exports = class Physics
       if entity.collider?
         @collision.update entity
   
-  update: !->
+  update: (delta) !->
     for _, entity of @updating
-      entity.speed = for i til 2 then entity.speed[i] + entity.gravity[i]
+      entity.speed = for i til 2 then entity.speed[i] + entity.gravity[i] * delta
       moving = false; for i til 2 then if entity.speed[i] != 0 then moving = true; break
       
+      speed = for i til 2 then entity.speed[i] * delta
+      
       mbox = entity.collider.bounding-box.clone!
-      mbox.expand -entity.speed[0] >? 0, -entity.speed[1] <? 0,
-                   entity.speed[0] >? 0,  entity.speed[1] >? 0
+      mbox.expand -speed[0] >? 0, -speed[1] >? 0, speed[0] >? 0, speed[1] >? 0
       
       solids = @collision.entities-in-bbox mbox, true
       
       if Object.keys solids .length > 0 then entity.speed = [ 0, 0 ]
-      else entity.pos = for i til 2 then entity.pos[i] + entity.speed[i]
+      else entity.pos = for i til 2 then entity.pos[i] + speed[i]

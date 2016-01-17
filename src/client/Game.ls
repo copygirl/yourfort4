@@ -24,7 +24,6 @@ export class Game extends Main
     # Using a web worker, we can avoid set-interval running at
     # crippled speed when the tab is in the background. Justice!
     @worker = new Worker "worker.js"
-    @worker.add-event-listener \message, @~update
   
   player:~
     -> @client.tracking[@client.own-id]
@@ -34,12 +33,14 @@ export class Game extends Main
     @graphics.init!
     <~! @assets.load "game"
     @emit \ready
-    @worker.post-message 1000 / ups
+    interval = 1 / ups
+    @worker.post-message interval * 1000
+    @worker.add-event-listener \message, !~> @update interval
     @client.connect!
   
-  update: !->
+  update: (delta) !->
     @controller.update!
-    super!
+    super delta
 
 
 <- window.add-event-listener "load"

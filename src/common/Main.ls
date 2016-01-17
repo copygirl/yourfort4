@@ -35,6 +35,6 @@ module.exports = class Main implements EventEmitter::
     
     @emit \despawn, entity
   
-  update: !->
-    for _, entity of @updating then entity.update!
-    @physics.update!
+  update: (delta) !->
+    for _, entity of @updating then entity.update delta
+    @physics.update delta
