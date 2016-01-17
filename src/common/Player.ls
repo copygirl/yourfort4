@@ -7,3 +7,6 @@ module.exports = class Player extends Entity
     
     @renderer = \sprite
     @sprite = \player
+    
+    @physics = true
+    @collider = \box

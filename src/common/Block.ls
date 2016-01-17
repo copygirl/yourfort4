@@ -7,3 +7,6 @@ module.exports = class Block extends Entity
     
     @renderer = \sprite
     @sprite = \block
+    
+    @solid = true
+    @collider = \box

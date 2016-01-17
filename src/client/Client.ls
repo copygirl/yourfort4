@@ -25,7 +25,7 @@ module.exports = class Client implements EventEmitter::
       if entity.networked
         @tracking[entity.network-id] = entity
     @game.on \despawn, (entity) !~>
-      delete! @tracking[entity.network-id]
+      delete @tracking[entity.network-id]
   
   logged-in:~ -> (@connected && @own-id?)
   
