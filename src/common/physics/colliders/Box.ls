@@ -14,13 +14,13 @@ module.exports = class Box extends Collider
   
   clone: -> new Box @left, @top, @right, @bottom
   
-  update: (@left, @top, @right, @bottom) !->
+  update: (@left, @top, @right, @bottom) -> this
   
-  update-from-entity: (e) !->
+  update-from-entity: (e) ->
     @update e.pos[0] - e.size[0] / 2, e.pos[1] - e.size[1] / 2,
             e.pos[0] + e.size[0] / 2, e.pos[1] + e.size[1] / 2
   
-  expand: (...args) !->
+  expand: (...args) ->
     switch args.length
       | 1 =>
         if args[0] instanceof Box
