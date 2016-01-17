@@ -20,5 +20,9 @@ module.exports = class Entity
   
   spawned:~ -> @id?
   
+  # Update function. Registered when entity
+  # is spawned, then called every tick.
+  update: null
+  
   to-string: ->
     "[" + typeof! this + (if !@id? then " (#{@id})" else "") + "]"

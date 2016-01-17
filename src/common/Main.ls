@@ -1,10 +1,16 @@
-require! events: { EventEmitter }
+require! {
+  events: { EventEmitter }
+  "./physics": { Physics }
+}
 
 module.exports = class Main implements EventEmitter::
   (@side) ->
     EventEmitter.call this
     @entities = { }
+    @updating = { }
     @next-entity-id = 1
+    
+    @physics = new Physics this
   
   add: (entity) !->
     if entity.spawned
@@ -13,6 +19,8 @@ module.exports = class Main implements EventEmitter::
     entity.main = this
     entity.id = @next-entity-id++
     @entities[entity.id] = entity
+    if entity.update?
+      @updating[entity.id] = entity
     
     @emit \spawn, entity
   
@@ -21,6 +29,12 @@ module.exports = class Main implements EventEmitter::
       throw new Error "Entity #entity not spawned"
     
     delete @entities[entity.id]
+    if entity.update?
+      delete @update[entity.id]
     entity.main = entity.id = null
     
     @emit \despawn, entity
+  
+  update: !->
+    for _, entity of @updating then entity.update!
+    @physics.update!

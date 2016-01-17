@@ -4,7 +4,6 @@ require! {
   "../common/Block"
   "../common/Player"
   "../common/network": { Side }
-  "../common/physics": { Physics }
   "./Input"
   "./Controller"
   "./Client"
@@ -21,7 +20,6 @@ export class Game extends Main
     @client     = new Client this
     @assets     = new Assets this
     @graphics   = new Graphics this, @canvas, size, scale
-    @physics    = new Physics this
     
     # Using a web worker, we can avoid set-interval running at
     # crippled speed when the tab is in the background. Justice!
@@ -31,17 +29,17 @@ export class Game extends Main
   player:~
     -> @client.tracking[@client.own-id]
   
-  run: (fps = 30) !->
+  run: (ups = 30) !->
     <~! @assets.load "loading-screen"
     @graphics.init!
     <~! @assets.load "game"
     @emit \ready
-    @worker.post-message 1000 / fps
+    @worker.post-message 1000 / ups
     @client.connect!
   
   update: !->
     @controller.update!
-    @physics.update!
+    super!
 
 
 <- window.add-event-listener "load"
