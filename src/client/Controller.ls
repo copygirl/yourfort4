@@ -1,8 +1,8 @@
 module.exports = class Controller
   (@game) ->
   
-  update: ->
-    if !(player = @game.player)? then return
-    player.pos =
-      player.pos[0] + (@game.input.right - @game.input.left) * 2
-      player.pos[1] + (@game.input.down - @game.input.up) * 2
+  update: !->
+    @game.player?.movement <<<
+      left:  @game.input.left
+      right: @game.input.right
+      jump:  @game.input.up
