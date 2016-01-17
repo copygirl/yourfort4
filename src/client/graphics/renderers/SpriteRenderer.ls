@@ -25,7 +25,10 @@ module.exports = class SpriteRenderer
     @graphics.push!
     
     scale = Matrix.Scale [ ...entity.size, 1 ]
-    translate = Matrix.Translation [ ...entity.pos, 0 ]
+    translate = Matrix.Translation do
+      * Math.round entity.pos[0]
+        Math.round entity.pos[1]
+        0
     @graphics.view-matrix .= x scale .x translate
     @graphics.program.uniforms.uMVMatrix.setf @graphics.view-matrix
     
