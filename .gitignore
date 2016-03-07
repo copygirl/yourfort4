@@ -1,5 +1,4 @@
 /node_modules/
-/lib/
 /public/game.js
 /public/worker.js
 /npm-debug.log

@@ -1,1 +1,0 @@
-export Sprite = require "./SpriteRenderer"
