@@ -12,20 +12,38 @@ exports.filter = function* filter(iterable, func) {
 };
 
 
-export.all = function* all(iterable, func) {
+exports.zip = function* zip(first, second, func) {
+  while (true) {
+    let { value: element1, done: done1 } = first.next();
+    let { value: element2, done: done2 } = second.next();
+    if (done1 || done2) break;
+    yield func(element1, element2);
+  }
+};
+
+
+exports.all = function all(iterable, func) {
   for (let element of iterable)
     if (!func(element)) return false;
   return true;
 };
 
-export.any = function* any(iterable, func = null) {
+exports.any = function any(iterable, func = null) {
   for (let element of iterable)
     if ((func == null) || func(element)) return true;
   return false;
 };
 
+exports.aggregate = function aggregate(iterable, func, value) {
+  let ignoreFirst = (value == undefined);
+  for (let element of iterable)
+    value = (ignoreFirst ? (ignoreFirst = false, element)
+                         : func(value, element));
+  return value;
+};
 
-export.take = function* take(iterable, count) {
+
+exports.take = function* take(iterable, count) {
   if (count > 0)
     for (let element of iterable) {
       yield element;
@@ -33,7 +51,7 @@ export.take = function* take(iterable, count) {
     }
 };
 
-export.skip = function* skip(iterable, count) {
+exports.skip = function* skip(iterable, count) {
   for (let element of iterable)
     if (--count < 0)
       yield element;
