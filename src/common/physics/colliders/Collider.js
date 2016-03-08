@@ -4,11 +4,17 @@ module.exports = class Collider {
   
   get boundingBox() { throw new Error("Not implemented"); }
   
-  update() { throw new Error("Not implemented"); }
+  // Update the collider to align with the specified entity.
+  update(entity) { throw new Error("Not implemented"); }
   
-  ray(x1, y1, x2, y2) { throw new Error("Not implemented"); }
+  // Cast a ray from starting point p into direction d against this Collider.
+  // Returns [ hit, normal ] or null if not hit.
+  ray(p, d) { throw new Error("Not implemented"); }
   
-  expand(shape) { throw new Error("Not implemented"); }
+  // Returns a new Collider made up of of this Collider, expanded by the specified Collider.
+  expand(collider) { throw new Error("Not implemented"); }
+  
+  clone() { throw new Error("Not implemented"); }
   
   
   static add(colliderClass) {

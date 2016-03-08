@@ -1,5 +1,19 @@
 let Collider = require("./Collider");
 
+
+let wallTest = function(p, d, i, wi, wj1, wj2, v) {
+  if (Math.abs(d[i]) < 0.0001) return null;
+  let t = (wi - p[i]) / d[i];
+  if ((t < 0) || (t > 1)) return null;
+  let pj = p[i ^ 1] * t;
+  if ((pj < wj1) || (pj > wj2)) return;
+  let hit = [ 0, 0 ];
+  hit[i] = wi;
+  hit[i ^ 1] = pj;
+  return [ hit, v ];
+};
+
+
 let Box = module.exports = class Box extends Collider {
   
   constructor(minX, minY, maxX, maxY) {
@@ -25,8 +39,13 @@ let Box = module.exports = class Box extends Collider {
     this.maxY = (entity.pos[1] + entity.size[1] / 2);
   }
   
-  ray(x1, y1, x2, y2) {
-    
+  ray(p, d) {
+    let result;
+    if ((result = wallTest(p, d, 0, this.minX, this.minY, this.maxY, [ -1, 0 ])) != null) return result;
+    if ((result = wallTest(p, d, 0, this.maxX, this.minY, this.maxY, [  1, 0 ])) != null) return result;
+    if ((result = wallTest(p, d, 1, this.minY, this.minX, this.maxX, [ 0, -1 ])) != null) return result;
+    if ((result = wallTest(p, d, 1, this.maxY, this.minX, this.maxX, [ 0,  1 ])) != null) return result;
+    return null;
   }
   
   expand(shape) {
@@ -37,6 +56,8 @@ let Box = module.exports = class Box extends Collider {
                      this.maxX + width / 2, this.maxY + height / 2);
     } else return null;
   }
+  
+  clone() { return new Box(this.minX, this.minY, this.maxX, this.maxY); }
   
 };
 
