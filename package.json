@@ -7,7 +7,6 @@
   "license": "MIT",
   "dependencies": {
     "browserify": "^13.0.0",
-    "sylvester": "0.0.21",
     "ws": "^0.8.1"
   },
   "scripts": {
