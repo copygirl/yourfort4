@@ -1,4 +1,5 @@
 let { type, rangeCheck, repeat } = require("../utility");
+let Vector = require("./Vector");
 
 
 module.exports = class Matrix {
@@ -62,9 +63,9 @@ module.exports = class Matrix {
   
   
   static lookAt(eye, center, up) {
-    let z = eye.subtract(center).toUnitVector();
-    let x = up.cross(z).toUnitVector();
-    let y = z.cross(x).toUnitVector();
+    let z = eye.subtract(center).normalize();
+    let x = up.cross(z).normalize();
+    let y = z.cross(x).normalize();
     
     let m = Matrix.identity(4);
     m.setRow(0, ...repeat(x, 3));
@@ -148,6 +149,7 @@ module.exports = class Matrix {
   }
   
   setRow(row, ...v) {
+    v = Vector.toVector(v, true);
     if (!rangeCheck(row, 0, this.rows - 1))
       throw new Error(`Row ${ row } is not valid in Matrix of size (${ this.size.join(",") })`);
     if (v.length > this.columns)
@@ -157,6 +159,7 @@ module.exports = class Matrix {
   }
   
   setColumn(column, ...v) {
+    v = Vector.toVector(v, true);
     if (!rangeCheck(column, 0, this.columns - 1))
       throw new Error(`Columns ${ column } is not valid in Matrix of size (${ this.size.join(",") })`);
     if (v.length > this.rows)
