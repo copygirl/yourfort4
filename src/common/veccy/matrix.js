@@ -1,7 +1,7 @@
 let { type, rangeCheck, repeat } = require("../utility");
 
 
-let Matrix = module.exports = class Matrix {
+module.exports = class Matrix {
   
   constructor(columns, rows, data) {
     this.columns = columns;
@@ -130,6 +130,6 @@ let Matrix = module.exports = class Matrix {
   }
   
   
-  clone() { return new Matrix(this.data); }
+  clone() { return new Matrix(this.columns, this.rows, this.data.slice(0)); }
   
 };
