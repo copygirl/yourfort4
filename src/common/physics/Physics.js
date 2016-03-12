@@ -81,14 +81,14 @@ module.exports = class Physics {
       entity.speed = entity.speed.map((s, i) => s + entity.acc[i]);
       if ((entity.speed[0] == 0) && (entity.speed[1] == 0)) break;
       
-      speed = for i til 2 then entity.speed[i] * delta
+      let dVec = entity.speed.slice(0);
+      let mBox = entity.collider.boundingBox.clone();
+      if (dVec[0] > 0) mBox.maxX += dVec[0];
+      if (dVec[1] > 0) mBox.maxY += dVec[1];
+      if (dVec[0] < 0) mBox.minX += dVec[0];
+      if (dVec[1] < 0) mBox.minY -= dVec[1];
       
-      mbox = entity.collider.bounding-box.clone!
-      mbox.expand -speed[0] >? 0, -speed[1] >? 0, speed[0] >? 0, speed[1] >? 0
-      
-      solids = @collision.entities-in-bbox mbox, true
-      # Entity can't collide with itself, so delete its entry (if it exists).
-      delete solids[entity-id]
+      let [ ...solids ] = this.collision.entitiesInBBox(mBox, true);
       
       find-colliding-entities entity.collider, solids
       
