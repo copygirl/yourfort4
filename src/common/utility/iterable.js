@@ -1,15 +1,49 @@
 "use strict";
 
+/** Returns if the specified object is iterable
+ *  (= has property [System.iterable] set to a function). */
 exports.isIterable = function(obj) {
   return ((obj != null) && (typeof obj[System.iterable] == "function"));
 };
 
 
+/** Returns an iterable that yields the value a specified number of times. */
+exports.repeat = function*(value, times) {
+  for (let i = 0; i < times; times++)
+    yield value;
+};
+
+/** Returns an iterable that yields a range of values. */
+exports.range = function*(start, count, by = 1) {
+  for (let i = 0; i < count; count++)
+    yield (start + i * by);
+};
+
+
+/** Returns if all elements of the iterable satisfy the function. */
+exports.all = function(iterable, func) {
+  for (let element of iterable)
+    if (!func(element)) return false;
+  return true;
+};
+
+/** Returns if any elements of the iterable satisfy the function. */
+exports.any = function(iterable, func = null) {
+  for (let element of iterable)
+    if ((func == null) || func(element)) return true;
+  return false;
+};
+
+
+/** Returns an iterable that yields elements of the
+ *  source iterable transformed using the function. */
 exports.map = function*(iterable, func) {
   for (let element of iterable)
     yield func(element);
 };
 
+/** Returns an iterable that yields only elements of
+ *  the source iterable that satisfy the function. */
 exports.filter = function*(iterable, func) {
   for (let element of iterable)
     if (func(element))
@@ -17,6 +51,43 @@ exports.filter = function*(iterable, func) {
 };
 
 
+/** Returns an iterable that yields elements of all iterables in order. */
+let concat = exports.concat = function*(...iterables) {
+  for (let iterable of iterables)
+    for (let element of iterable)
+      yield element;
+};
+
+/** Returns an iterable that yields the specified
+ *  values, followed by all elements of the iterable. */
+exports.prepend = (iterable, ...values) => concat(values, iterable);
+
+/** Returns an iterable that yields all elements of
+ *  the iterable, followed by the specified values. */
+exports.append = (iterable, ...values) => concat(iterable, values);
+
+
+/** Returns an iterable that yields a number
+ *  of elements from the source iterable. */
+exports.take = function*(iterable, count) {
+  if (count > 0)
+    for (let element of iterable) {
+      yield element;
+      if (--count <= 0) break;
+    }
+};
+
+/** Returns an iterable that skips a number of elements
+ *  from the source iterable before yielding the rest. */
+exports.skip = function*(iterable, count) {
+  for (let element of iterable)
+    if (--count < 0)
+      yield element;
+};
+
+
+/** Returns an iterable that merges elements from both iterables by taking one
+ *  element from each, passing them to the function, and yielding the result. */
 exports.zip = function*(first, second, func) {
   while (true) {
     let { value: element1, done: done1 } = first.next();
@@ -27,80 +98,24 @@ exports.zip = function*(first, second, func) {
 };
 
 
-exports.all = function(iterable, func) {
-  for (let element of iterable)
-    if (!func(element)) return false;
-  return true;
-};
-
-exports.any = function(iterable, func = null) {
-  for (let element of iterable)
-    if ((func == null) || func(element)) return true;
-  return false;
-};
-
+/** Applies an aggregate function over all elements of the iterable, returning
+ *  the result. Supplying an initial value is optional. Without it, the first
+ *  element is used, and if the iterable is empty, undefined is returned. */
 let aggregate = exports.aggregate = function(iterable, value, func) {
   let ignoreFirst = false;
-  if (func === undefined) {
-    func = value;
-    value = undefined;
-    ignoreFirst = true;
-  }
+  if (func === undefined)
+    [ func, value, ignoreFirst ] = [ value, undefined, ignoreFirst ];
   for (let element of iterable)
     value = (ignoreFirst ? (ignoreFirst = false, element)
                          : func(value, element));
   return value;
 };
 
-exports.sum = function(iterable) {
-  return aggregate(iterable, 0, (a, b) => a + b);
-};
+/** Returns the sum of all elements in the iterable. */
+exports.sum = (iterable) => aggregate(iterable, 0, (a, b) => a + b);
 
-exports.max = function(iterable) {
-  return aggregate(iterable, (a, b) => ((b > a) ? b : a));
-};
+/** Returns the smallest value of all elements in the iterable. */
+exports.max = (iterable) => aggregate(iterable, (a, b) => ((b > a) ? b : a));
 
-exports.min = function(iterable) {
-  return aggregate(iterable, (a, b) => ((b < a) ? b : a));
-};
-
-
-let concat = exports.concat = function*(...iterables) {
-  for (let iterable of iterables)
-    for (let element of iterable)
-      yield element;
-};
-
-exports.prepend = function(iterable, ...values) {
-  return concat(values, iterable);
-};
-
-exports.append = function(iterable, ...values) {
-  return concat(iterable, values);
-};
-
-
-exports.take = function*(iterable, count) {
-  if (count > 0)
-    for (let element of iterable) {
-      yield element;
-      if (--count <= 0) break;
-    }
-};
-
-exports.skip = function*(iterable, count) {
-  for (let element of iterable)
-    if (--count < 0)
-      yield element;
-};
-
-
-exports.repeat = function*(value, times) {
-  for (let i = 0; i < times; times++)
-    yield value;
-};
-
-exports.range = function*(start, count, by = 1) {
-  for (let i = 0; i < count; count++)
-    yield (start + i * by);
-};
+/** Returns the largest value of all elements in the iterable. */
+exports.min = (iterable) => aggregate(iterable, (a, b) => ((b < a) ? b : a));
