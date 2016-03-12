@@ -119,3 +119,7 @@ exports.max = (iterable) => aggregate(iterable, (a, b) => ((b > a) ? b : a));
 
 /** Returns the largest value of all elements in the iterable. */
 exports.min = (iterable) => aggregate(iterable, (a, b) => ((b < a) ? b : a));
+
+/** Returns a string of all elements in the iterable
+ *  joined together seperated by the specified string. */
+exports.join = (iterable, seperator = ", ") => aggregate(iterable, (a, b) => `${ a }${ seperator }${ b }`);
