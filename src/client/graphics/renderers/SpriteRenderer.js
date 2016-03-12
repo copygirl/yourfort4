@@ -1,8 +1,8 @@
 "use strict";
 
 let Buffer = require("../Buffer");
-let { map }    = require("../common/utility");
-let { Matrix } = require("../common/utility/veccy");
+let { map }    = require("../../../common/utility");
+let { Matrix } = require("../../../common/veccy");
 
 module.exports = class SpriteRenderer {
   

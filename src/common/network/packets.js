@@ -32,8 +32,8 @@ PacketType.define(2, "spawn", Side.CLIENT,
   (game, { id, type, x, y }) => {
     if (game.client.tracking[id] != null)
       throw new Error(`Spawned entity '${ id }' multiple times`);
-    game.add(extend(new Block(), { networkId: id, pos: [ x, y ]
-  }));
+    game.add(extend(new Block(), { networkId: id, pos: [ x, y ] }));
+  });
 
 PacketType.define(3, "despawn", Side.CLIENT,
   [ { id: "uint" } ],

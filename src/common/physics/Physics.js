@@ -1,5 +1,5 @@
 let Entity       = require("../Entity");
-let { Collider } = require("../colliders");
+let { Collider } = require("./colliders");
 let CollisionMap = require("./CollisionMap");
 let { implement, type } = require("../utility");
 
@@ -88,16 +88,9 @@ module.exports = class Physics {
       if (dVec[0] < 0) mBox.minX += dVec[0];
       if (dVec[1] < 0) mBox.minY -= dVec[1];
       
-      let [ ...solids ] = this.collision.entitiesInBBox(mBox, true);
+      let solids = [ ...this.collision.entitiesInBBox(mBox, true) ];
       
-      find-colliding-entities entity.collider, solids
-      
-      entity.collider.move ...speed
-      
-      for _, other in solids
-        speed = [ 0, 0 ]
-      
-      entity.pos = for i til 2 then entity.pos[i] + speed[i]
+      // TODO!
     }
   }
   
