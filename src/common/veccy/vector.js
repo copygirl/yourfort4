@@ -1,30 +1,25 @@
-let { rangeCheck, map, zip, aggregate, sum, repeat } = require("../utility");
+let { type, rangeCheck,
+      repeat, any, map, zip,
+      aggregate, sum, join } = require("../utility");
 
 
-let Vector;
-
-let vectorify = function(v, what, dims = null) {
-  if (v.length == 1) {
-    if (v[0] instanceof Array) v = v[0];
-    if (v[0] instanceof Vector) v = v[0].elements;
-  }
-  if ((what != null) && (this.dimensions != v.length) ||
-      (dims != null) && (this.dimensions != dims))
-    throw new Error(`Can't ${ what } two vectors of dimensions ${ this.dimensions } and ${ v.length }`);
-  return v;
+let makeIncompatibleVectorsError = function(a, b, what) {
+  return new Error(`Can't ${ what } two vectors of dimensions ${ a.dimensions } and ${ b.dimensions }`);
 };
 
 
-Vector = module.exports = class Vector {
+module.exports = class Vector {
   
   constructor(elements) {
     this.elements = elements;
   }
   
   static create(...elements) {
-    if (elements.length == 0)
-      throw new Error("Vector must have at least 1 dimension");
-    return new Vector(vectorify(elements));
+    if (elements.length < 2)
+      throw new Error("Vector must have at least 2 dimensions");
+    if (any(elements, e => (typeof e != "number")))
+      throw new Error(`Attempting to create Vector with non-number elements ([${ join(map(elements, type), ", ") }])`)
+    return new Vector(elements);
   }
   
   static zero(dimensions) {
@@ -39,6 +34,18 @@ Vector = module.exports = class Vector {
     let v = Vector.zero(dimensions);
     v.elements[unitDim] = 1;
     return v;
+  }
+  
+  static toVector(obj, inspectArray = false) {
+    if (obj instanceof Vector) return obj;
+    if (obj instanceof Array) {
+      if (obj.length == 1) {
+        if (obj[0] instanceof Vector) return obj[0];
+        if (obj[0] instanceof Array) return Vector.create(...obj[0]);
+      }
+      return Vector.create(...obj);
+    }
+    throw new Error(`Can't convert object of type ${ type(obj) } to Vector`);
   }
   
   
@@ -67,21 +74,33 @@ Vector = module.exports = class Vector {
   multiply(f) { return Vector.create(...map(this, e => e * f)); }
   
   
-  add(...v) { return Vector.create(...zip(this,
-      vectorify.call(this, v, "add"),
-      (a, b) => a + b)); }
+  add(...v) {
+    v = Vector.toVector(v, true);
+    if (this.dimensions != v.dimensions)
+      throw makeIncompatibleVectorsError(this, v, "add");
+    return Vector.create(...zip(this, v, (a, b) => a + b));
+  }
   
-  subtract(...v) { return Vector.create(...zip(this,
-      vectorify.call(this, v, "subtract"),
-      (a, b) => a - b)); }
+  subtract(...v) {
+    v = Vector.toVector(v, true);
+    if (this.dimensions != v.dimensions)
+      throw makeIncompatibleVectorsError(this, v, "subtract");
+    return Vector.create(...zip(this, v, (a, b) => a - b));
+  }
   
-  dot(...v) { return sum(zip(this,
-      vectorify.call(this, v, "dot"),
-      (a, b) => a * b)); }
+  dot(...v) {
+    v = Vector.toVector(v, true);
+    if (this.dimensions != v.dimensions)
+      throw makeIncompatibleVectorsError(this, v, "dot");
+    return sum(zip(this, v, (a, b) => a * b));
+  }
   
   cross(...v) {
+    v = Vector.toVector(v, true);
+    if ((this.dimensions != 3) || (v.dimensions != 3))
+      throw makeIncompatibleVectorsError(this, v, "cross");
     let [ x, y, z ] = this;
-    let [ a, b, c ] = vectorify.call(this, v, "cross", 3);
+    let [ a, b, c ] = v;
     return Vector.create((y * c) - (z * b),
                          (z * a) - (x * c),
                          (x * b) - (y * a));
