@@ -13,7 +13,7 @@ module.exports = class Shader {
     switch (ext) {
       case "vs": this.type = GL.VERTEX_SHADER; break;
       case "fs": this.type = GL.FRAGMENT_SHADER; break;
-      default: throw new Error(`Unknown shader type '${ ext }'`); break;
+      default: throw new Error(`Unknown shader type '${ ext }'`);
     }
     
     this.handle = GL.createShader(this.type);

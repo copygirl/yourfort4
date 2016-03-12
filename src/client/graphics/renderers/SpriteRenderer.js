@@ -1,7 +1,8 @@
 "use strict";
 
-let Matrix = require("sylvester").Matrix;
 let Buffer = require("../Buffer");
+let { map }    = require("../common/utility");
+let { Matrix } = require("../common/utility/veccy");
 
 module.exports = class SpriteRenderer {
   
@@ -30,11 +31,10 @@ module.exports = class SpriteRenderer {
     
     GFX.push();
     
-    let scale = Matrix.Scale([ entity.size[0], entity.size[1], 1 ]);
-    let translate = Matrix.Translation([
-      Math.round(entity.pos[0]), Math.round(entity.pos[1]), 0 ]);
+    let scale     = Matrix.Scale(...entity.size, 1);
+    let translate = Matrix.Translation(...map(entity.pos, Math.round), 0);
     
-    GFX.viewMatrix = GFX.viewMatrix.x(scale).x(translate);
+    GFX.viewMatrix = GFX.viewMatrix.multiply(scale).multiply(translate);
     GFX.program.uniforms.uMVMatrix.setf(GFX.viewMatrix);
     
     GFX.program.uniforms.uColor.setf(entity.color);

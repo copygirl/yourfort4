@@ -55,8 +55,6 @@ module.exports = class Buffer {
       
       let newData = [ ];
       for (let element of data) {
-        // If element is a sylvester data type, get down to its array.
-        if (element.elements) element = element.elements;
         flatten(data, newData);
         if (this.pointerSize == null)
           this.pointerSize = newData.length;

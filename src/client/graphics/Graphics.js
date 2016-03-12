@@ -1,14 +1,13 @@
 "use strict";
 
-let { Matrix } = require("sylvester");
-let Entity = require("../../common/Entity");
-let Shader = require("./Shader");
+let Entity  = require("../../common/Entity");
+let Shader  = require("./Shader");
 let Program = require("./Program");
-let Buffer = require("./Buffer");
+let Buffer  = require("./Buffer");
 
-let renderers = require("./renderers");
+let renderers     = require("./renderers");
+let { Matrix }    = require("../../common/veccy");
 let { implement } = require("../../common/utility");
-let { makeOrtho } = require("./glUtils");
 
 
 let createWebGLContext = function(canvas) {
@@ -35,7 +34,7 @@ module.exports = class Graphics {
     
     this.matrixStack = [ ];
     this.projMatrix  = null;
-    this.viewMatrix  = Matrix.I(4);
+    this.viewMatrix  = Matrix.identity(4);
     this.resize(size, scale);
     
     this.background = [ 0.0675, 0.125, 0.25, 1 ];
@@ -94,7 +93,7 @@ module.exports = class Graphics {
   }
   
   
-  push(matrix = this.viewMatrix.dup()) {
+  push(matrix = this.viewMatrix.clone()) {
     this.matrixStack.push(this.viewMatrix);
     return this.viewMatrix = matrix;
   }
@@ -112,8 +111,8 @@ module.exports = class Graphics {
     GL.clearColor(...this.background);
     GL.clear(GL.COLOR_BUFFER_BIT | GL.DEPTH_BUFFER_BIT);
     
-    this.program.uniforms.uPMatrix.setf(this.projMatrix);
-    this.program.uniforms.uMVMatrix.setf(this.viewMatrix);
+    this.program.uniforms.uPMatrix.setf(...this.projMatrix.elements);
+    this.program.uniforms.uMVMatrix.setf(...this.viewMatrix.elements);
     
     for (let entity in this.renderable) {
       let renderer = this.renderers[entity.renderer];

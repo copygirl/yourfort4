@@ -1,6 +1,6 @@
 "use strict";
 
-let { Matrix, Vector } = require("sylvester");
+let { Matrix } = require("../../common/veccy");
 
 module.exports = class Uniform {
   
@@ -10,7 +10,6 @@ module.exports = class Uniform {
     this.program = program;
     this.name    = name;
     this.handle  = GL.getUniformLocation(program.handle, name);
-    this.value   = null;
     
     program.uniforms[name] = this;
   }
@@ -19,21 +18,18 @@ module.exports = class Uniform {
     const GL = this.program.graphics.gl;
     
     if (values[0] instanceof Matrix) {
-      this.value = values[0];
-      GL[`uniformMatrix${ this.value.elements.length }fv`](
-        this.handle, false, ...[].concat(...this.value.elements));
+      GL[`uniformMatrix${ values[0].elements.length }fv`](
+        this.handle, false, ...values[0].elements);
       return;
     }
     
-    this.value = ((values[0] instanceof Vector) ? values[0].elements : values);
-    GL[`uniform${ this.value.length }fv`](this.handle, ...this.value);
+    GL[`uniform${ values.length }fv`](this.handle, ...values);
   }
   
   seti(...values) {
     const GL = this.program.graphics.gl;
     
-    this.value = ((values[0] instanceof Vector) ? values[0].elements : values);
-    GL[`uniform${ this.value.length }iv`](this.handle, ...this.value);
+    GL[`uniform${ values.length }iv`](this.handle, ...values);
   }
   
 };
