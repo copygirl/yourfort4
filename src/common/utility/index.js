@@ -38,4 +38,8 @@ exports.type = function(obj) {
   return Object.prototype.toString.call(obj).slice(8, -1);
 };
 
+exports.rangeCheck = function(value, min, max) {
+  return ((typeof value == "number") && (value >= min) && (value <= max));
+};
+
 extend(exports, iterable);

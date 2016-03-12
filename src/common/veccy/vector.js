@@ -1,4 +1,4 @@
-let { map, zip, aggregate, sum, repeat } = require("../utility/iterable");
+let { rangeCheck, map, zip, aggregate, sum, repeat } = require("../utility");
 
 
 let Vector;
@@ -34,7 +34,7 @@ Vector = module.exports = class Vector {
     return Vector.create(...repeat(1, dimensions)); }
   
   static unit(dimensions, unitDim) {
-    if ((unitDim < 0) || (unitDim >= dimensions))
+    if (!rangeCheck(unitDim, 0, dimensions - 1))
       throw new Error("unitDim is out of range")
     let v = Vector.zero(dimensions);
     v.elements[unitDim] = 1;

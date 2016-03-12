@@ -1,4 +1,4 @@
-let { type, repeat } = require("../utility");
+let { type, rangeCheck, repeat } = require("../utility");
 
 
 let Matrix = module.exports = class Matrix {
@@ -85,34 +85,34 @@ let Matrix = module.exports = class Matrix {
   
   _index(i, j) { return (i + j * this.columns); }
   
-  _indexCheck(i, j) {
-    if ((typeof i != "number") || (i < 0) || (i >= this.columns) ||
-        (typeof j != "number") || (j < 0) || (j >= this.rows))
+  _indexWithCheck(i, j) {
+    if (!rangeCheck(i, 0, this.rows - 1) ||
+        !rangeCheck(j, 0, this.columns - 1))
       throw new Error(`[${ i },${ j }] is not a valid index in Matrix of size (${ this.size.join(",") })`);
     return this._index(i, j);
   }
   
-  get(i, j) { return this.data[this._indexCheck(i, j)]; }
+  get(i, j) { return this.data[this._indexWithCheck(i, j)]; }
   
-  set(i, j, v) { this.data[this._indexCheck(i, j)] = v; }
+  set(i, j, v) { this.data[this._indexWithCheck(i, j)] = v; }
   
   
   * row(row) {
-    if ((typeof row != "number") || (row < 0) || (row >= this.rows))
+    if (!rangeCheck(row, 0, this.rows - 1))
       throw new Error(`Row ${ row } is not valid in Matrix of size (${ this.size.join(",") })`);
     for (let i = 0; i < this.columns; i++)
       yield this.data[this._index(i, row)];
   }
   
   * column(column) {
-    if ((typeof column != "number") || (column < 0) || (column >= this.columns))
+    if (!rangeCheck(column, 0, this.columns - 1))
       throw new Error(`Column ${ column } is not valid in Matrix of size (${ this.size.join(",") })`);
     for (let i = 0; i < this.rows; i++)
       yield this.data[this._index(column, i)];
   }
   
   setRow(row, ...v) {
-    if ((typeof row != "number") || (row < 0) || (row >= this.rows))
+    if (!rangeCheck(row, 0, this.rows - 1))
       throw new Error(`Row ${ row } is not valid in Matrix of size (${ this.size.join(",") })`);
     if (v.length > this.columns)
       throw new Error(`Can't put ${ v.length } values into a matrix with ${ this.columns } columns`);
@@ -121,7 +121,7 @@ let Matrix = module.exports = class Matrix {
   }
   
   setColumn(column, ...v) {
-    if ((typeof column != "number") || (column < 0) || (column >= this.columns))
+    if (!rangeCheck(column, 0, this.columns - 1))
       throw new Error(`Columns ${ column } is not valid in Matrix of size (${ this.size.join(",") })`);
     if (v.length > this.rows)
       throw new Error(`Can't put ${ v.length } values into a matrix with ${ this.rows } rows`);
