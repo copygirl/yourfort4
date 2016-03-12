@@ -1,5 +1,10 @@
 "use strict";
 
+exports.isIterable = function(obj) {
+  return ((obj != null) && (typeof obj[System.iterable] == "function"));
+};
+
+
 exports.map = function*(iterable, func) {
   for (let element of iterable)
     yield func(element);
