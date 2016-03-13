@@ -15,18 +15,19 @@ let extend = exports.extend = function(target, ...sources) {
 };
 
 exports.implement = function(targetClass, ...mixins) {
-  return extend(targetClass.prototype, iterable.map(mixins,
+  extend(targetClass.prototype, ...iterable.map(mixins,
     // If mixin is a function, it's likely a class
     // constructor, so use its prototype instead.
     e => ((typeof e == "function") ? e.prototype : e)));
+  return targetClass;
 };
 
 // Flattens an iterable object into an array recursively.
 exports.flatten = function flatten(obj, array = [ ]) {
-  if ((obj != null) && (obj[Symbol.iterator] != null)) {
-    for (let element of array)
+  if (iterable.isIterable(obj))
+    for (let element of obj)
       flatten(element, array);
-  } else array.push(obj);
+  else array.push(obj);
   return array;
 };
 
