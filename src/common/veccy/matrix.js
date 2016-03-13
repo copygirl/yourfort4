@@ -2,24 +2,29 @@ let { type, rangeCheck, repeat } = require("../utility");
 let Vector = require("./Vector");
 
 
+let makeInvalidMatrixSizeError = function(m, what) {
+  return new Error(`${ what } is not valid in Matrix of size (${ m.columns },${ m.rows })`)
+};
+
+
 module.exports = class Matrix {
   
-  constructor(columns, rows, data) {
-    this.columns = columns;
-    this.rows    = rows;
-    this.data    = data;
+  constructor(columns, rows, elements) {
+    this.columns  = columns;
+    this.rows     = rows;
+    this.elements = elements;
   }
   
   static create(m) {
     let columns = null;
     let rows = 0;
-    let data = [ ];
+    let elements = [ ];
     for (let row of m) {
       let rowLength = 0;
       for (let element of row) {
         if (typeof element != "number")
           throw new Error(`Expected number, got '${ type(element) }'`)
-        data.push(element);
+        elements.push(element);
         rowLength++;
       }
       if (columns == null) columns = rowLength;
@@ -27,16 +32,16 @@ module.exports = class Matrix {
         throw new Error(`Row lengths don't match (${ rowLength } != ${ columns })`);
       rows++;
     }
-    if ((rows == 0) || (columns == 0))
-      throw new Error("Matrix must have at least one element");
-    return new Matrix(columns, rows, data);
+    if ((rows < 1) || (columns < 1))
+      throw new Error(`Invalid matrix dimensions (${ columns },${ rows })`);
+    return new Matrix(columns, rows, elements);
   }
   
   static zero(columns, rows = columns) {
-    if ((columns <= 0) || (rows <= 0))
+    if ((columns < 1) || (rows < 1))
       throw new Error(`Invalid matrix dimensions (${ columns },${ rows })`);
-    let data = new Array(columns * rows);
-    return new Matrix(columns, rows, data);
+    let elements = new Array(columns * rows);
+    return new Matrix(columns, rows, elements);
   }
   
   static identity(size) {
@@ -48,14 +53,13 @@ module.exports = class Matrix {
   
   
   static translation(...v) {
-    let matrix = Matrix.identity(v.length - 1);
-    for (let i = 0; i < v.length; i++)
-      matrix.set(i, matrix.rows - 1, v[i]);
+    let matrix = Matrix.identity(v.length + 1);
+    matrix.setColumn(matrix.rows - 1, v);
     return matrix;
   }
   
   static scale(...v) {
-    let matrix = Matrix.identity(v.length - 1);
+    let matrix = Matrix.identity(v.length + 1);
     for (let i = 0; i < v.length; i++)
       matrix.set(i, i, v[i]);
     return matrix;
@@ -87,9 +91,9 @@ module.exports = class Matrix {
     let D = -2 * zfar * znear / (zfar - znear);
     
     return Matrix.create(
-      [[ X, 0,  A, 0 ]
-       [ 0, Y,  B, 0 ]
-       [ 0, 0,  C, D ]
+      [[ X, 0,  A, 0 ],
+       [ 0, Y,  B, 0 ],
+       [ 0, 0,  C, D ],
        [ 0, 0, -1, 0 ]]);
   }
   
@@ -108,16 +112,14 @@ module.exports = class Matrix {
     let tz = -(zfar + znear) / (zfar - znear);
     
     return Matrix.create(
-      [[ 2 / (right - left), 0, 0, 0 ]
-      [ 0, 2 / (top - bottom), 0, 0 ]
-      [ 0, 0, -2 / (zfar - znear), 0 ]
-      [ tx, ty, tz, 1 ]]);
+      [[ 2 / (right - left), 0, 0, 0 ],
+       [ 0, 2 / (top - bottom), 0, 0 ],
+       [ 0, 0, -2 / (zfar - znear), 0 ],
+       [ tx, ty, tz, 1 ]]);
   };
   
   
-  get size() { return [ this.columns, this.rows ]; }
-  
-  get elements() { return this.elements[Symbol.iterator]; }
+  get dimensions() { return [ this.columns, this.rows ]; }
   
   
   _index(i, j) { return (i + j * this.columns); }
@@ -125,50 +127,50 @@ module.exports = class Matrix {
   _indexWithCheck(i, j) {
     if (!rangeCheck(i, 0, this.rows - 1) ||
         !rangeCheck(j, 0, this.columns - 1))
-      throw new Error(`[${ i },${ j }] is not a valid index in Matrix of size (${ this.size.join(",") })`);
+      throw makeInvalidMatrixSizeError(this, `Index [${ i },${ j }]`);
     return this._index(i, j);
   }
   
-  get(i, j) { return this.data[this._indexWithCheck(i, j)]; }
+  get(i, j) { return this.elements[this._indexWithCheck(i, j)]; }
   
-  set(i, j, v) { this.data[this._indexWithCheck(i, j)] = v; }
+  set(i, j, v) { this.elements[this._indexWithCheck(i, j)] = v; }
   
   
   * row(row) {
     if (!rangeCheck(row, 0, this.rows - 1))
-      throw new Error(`Row ${ row } is not valid in Matrix of size (${ this.size.join(",") })`);
+      throw makeInvalidMatrixSizeError(this, `Row ${ row }`);
     for (let i = 0; i < this.columns; i++)
-      yield this.data[this._index(i, row)];
+      yield this.elements[this._index(i, row)];
   }
   
   * column(column) {
     if (!rangeCheck(column, 0, this.columns - 1))
-      throw new Error(`Column ${ column } is not valid in Matrix of size (${ this.size.join(",") })`);
+      throw makeInvalidMatrixSizeError(this, `Column ${ column }`);
     for (let i = 0; i < this.rows; i++)
-      yield this.data[this._index(column, i)];
+      yield this.elements[this._index(column, i)];
   }
   
   setRow(row, ...v) {
     v = Vector.toVector(v, true);
     if (!rangeCheck(row, 0, this.rows - 1))
-      throw new Error(`Row ${ row } is not valid in Matrix of size (${ this.size.join(",") })`);
-    if (v.length > this.columns)
+      throw makeInvalidMatrixSizeError(this, `Row ${ row }`);
+    if (v.dimensions > this.columns)
       throw new Error(`Can't put ${ v.length } values into a matrix with ${ this.columns } columns`);
     for (let i = 0; i < this.columns; i++)
-      this.data[this._index(i, row)] = v[i];
+      this.elements[this._index(i, row)] = v[i];
   }
   
   setColumn(column, ...v) {
     v = Vector.toVector(v, true);
     if (!rangeCheck(column, 0, this.columns - 1))
-      throw new Error(`Columns ${ column } is not valid in Matrix of size (${ this.size.join(",") })`);
-    if (v.length > this.rows)
+      throw makeInvalidMatrixSizeError(this, `Column ${ column }`);
+    if (v.dimensions > this.rows)
       throw new Error(`Can't put ${ v.length } values into a matrix with ${ this.rows } rows`);
     for (let i = 0; i < this.rows; i++)
-      this.data[this._index(column, i)] = v[i];
+      this.elements[this._index(column, i)] = v[i];
   }
   
   
-  clone() { return new Matrix(this.columns, this.rows, this.data.slice(0)); }
+  clone() { return new Matrix(this.columns, this.rows, this.elements.slice(0)); }
   
 };
