@@ -4,13 +4,21 @@ let iterable = require("./iterable");
 
 // Extends the target object with all properties of the source objects.
 let extend = exports.extend = function(target, ...sources) {
-  for (let source of sources)
-    for (let prop in source) {
-      // Properly copy getters/setters over, instead of calling them.
-      let descriptor = Object.getOwnPropertyDescriptor(source, prop);
-      if (descriptor != null)
-        Object.defineProperty(target, prop, descriptor);
+  for (let source of sources) {
+    let properties = iterable.concat(
+      Object.getOwnPropertyNames(source),
+      Object.getOwnPropertySymbols(source));
+    for (let property of properties) {
+      let descriptor = Object.getOwnPropertyDescriptor(source, property);
+      if (descriptor != null) {
+        // If it's a data descriptor (not getter/setter), just set
+        // the value normally, causing existing setters to be used.
+        if (descriptor.value) target[property] = descriptor.value;
+        // Otherwise, properly copy getters/setters over, instead of calling them.
+        else Object.defineProperty(target, property, descriptor);
+      }
     }
+  }
   return target;
 };
 
