@@ -2,51 +2,40 @@
 
 let { Shader, Texture } = require("./graphics"); 
 
-let loadFile = function(url, callback) {
-  let request = new XMLHttpRequest();
-  request.open("GET", url);
-  request.overrideMimeType("text/plain");
-  request.addEventListener("loadend", () => {
-    if (request.responseText != null)
-      callback(null, request.responseText);
-    else callback(new Error(`Error loading asset '${ url }'`));
+let loadFile = (url) =>
+  new Promise((resolve, reject) => {
+    let request = new XMLHttpRequest();
+    request.open("GET", url);
+    request.overrideMimeType("text/plain");
+    request.addEventListener("loadend", () => {
+      if (request.responseText != null)
+        resolve(request.responseText);
+      else reject(new Error(`Error loading asset '${ url }'`));
+    });
+    request.send();
   });
-  request.send();
-};
+
 
 let resourceHandlers = {
-  sprites: function(game, name, folder, callback) {
-    let image = new Image();
-    image.name = name;
-    image.addEventListener("error", () => {
-      callback(new Error(`Error loading sprite '${ name }'`)); });
-    image.addEventListener("load", () => {
-      image.texture = new Texture(game.graphics, image);
-      callback(null, image); });
-    image.src = `${ folder }/${ name }.png`;
-  },
-  shaders: function(game, name, folder, callback) {
-    loadFile("#folder/#name", (err, src) => {
-      let shader;
-      if (err == null) {
-        try { shader = new Shader(game.graphics, name, src); }
-        catch (e) { err = e; }
-      }
-      callback(err, shader);
-    });
-  }
+  sprites: (game, name, folder) =>
+    new Promise((resolve, reject) => {
+      let image = new Image();
+      image.name = name;
+      image.addEventListener("error", () => {
+        reject(new Error(`Error loading sprite '${ name }'`)); });
+      image.addEventListener("load", () => {
+        image.texture = new Texture(game.graphics, image);
+        resolve(image); });
+      image.src = `${ folder }/${ name }.png`;
+      return image;
+    }),
+  shaders: (game, name, folder) =>
+    loadFile(`${ folder }/${ name }`)
+      .then(src => new Shader(game.graphics, name, src))
 };
 
-let assets = null;
-let loadAssets = function(callback) {
-  if (assets != null) return callback(null, assets);
-  loadFile("assets/assets.json", (err, json) => {
-    if (err != null) {
-      try { assets = JSON.parse(json); }
-      catch (e) { err = e; }
-    }
-    callback(err, assets); });
-};
+let assetsPromise = loadFile("assets/assets.json")
+  .then(str => JSON.parse(str));
 
 
 module.exports = class Assets {
@@ -55,8 +44,8 @@ module.exports = class Assets {
     this.game = game;
   }
   
-  load(group, callback, progress) {
-    loadAssets((err, assets) => {
+  load(group, done, progress) {
+    assetsPromise.then(assets => {
       assets = assets[group];
       
       let numAssets = 0;
@@ -68,23 +57,19 @@ module.exports = class Assets {
         let group   = this[type] = { };
         
         if (assets[type] != null)
-          for (let name in assets[type]) {
+          for (let name of assets[type]) {
             numAssets++;
-            handler(this.game, name, folder, (err, asset) => {
-              if (err != null) console.error(err);
-              else group[name] = asset;
-              numAssetsCompleted++;
-              
-              if (progress != null)
-                progress(asset, numAssetsCompleted, numAssets);
-              if (numAssetsCompleted >= numAssets)
-                callback();
-            });
+            handler(this.game, name, folder)
+              .then(asset => {
+                group[asset.name] = asset;
+                numAssetsCompleted++;
+                if (progress != null)
+                  progress(asset, numAssetsCompleted + 1, numAssets);
+                if (numAssetsCompleted >= numAssets) done();
+              });
           }
       }
-      
-      if (numAssets <= 0)
-        callback();
+      if (numAssets <= 0) done();
     });
   }
   
