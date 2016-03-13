@@ -51,7 +51,7 @@ module.exports = class Vector {
   
   get dimensions() { return this.elements.length; }
   
-  get lengthSqr() { return sum(map(this, 0, e => e * e)); }
+  get lengthSqr() { return sum(map(this, e => e * e)); }
   
   get length() { return Math.sqrt(this.lengthSqr); }
   
@@ -107,7 +107,7 @@ module.exports = class Vector {
   }
   
   
-  [Symbol.iterator]() { return this.elements[Symbol.iterator]; }
+  [Symbol.iterator]() { return this.elements[Symbol.iterator](); }
   
   toString() { return `[${ this.elements.join(", ") }]`; }
   
