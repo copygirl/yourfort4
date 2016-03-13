@@ -3,7 +3,7 @@
 /** Returns if the specified object is iterable
  *  (= has property [System.iterable] set to a function). */
 exports.isIterable = function(obj) {
-  return ((obj != null) && (typeof obj[System.iterable] == "function"));
+  return ((obj != null) && (typeof obj[Symbol.iterable] == "function"));
 };
 
 
@@ -104,7 +104,7 @@ exports.zip = function*(first, second, func) {
 let aggregate = exports.aggregate = function(iterable, value, func) {
   let ignoreFirst = false;
   if (func === undefined)
-    [ func, value, ignoreFirst ] = [ value, undefined, ignoreFirst ];
+    [ func, value, ignoreFirst ] = [ value, undefined, true ];
   for (let element of iterable)
     value = (ignoreFirst ? (ignoreFirst = false, element)
                          : func(value, element));
