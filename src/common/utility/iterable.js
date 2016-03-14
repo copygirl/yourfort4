@@ -15,7 +15,7 @@ exports.repeat = function*(value, times) {
 
 /** Returns an iterable that yields a range of values. */
 exports.range = function*(start, count, by = 1) {
-  for (let i = 0; i < count; count++)
+  for (let i = 0; i < count; i++)
     yield (start + i * by);
 };
 
@@ -54,8 +54,7 @@ exports.filter = function*(iterable, func) {
 /** Returns an iterable that yields elements of all iterables in order. */
 let concat = exports.concat = function*(...iterables) {
   for (let iterable of iterables)
-    for (let element of iterable)
-      yield element;
+    yield* iterable;
 };
 
 /** Returns an iterable that yields the specified
@@ -67,8 +66,8 @@ exports.prepend = (iterable, ...values) => concat(values, iterable);
 exports.append = (iterable, ...values) => concat(iterable, values);
 
 
-/** Returns an iterable that yields a number
- *  of elements from the source iterable. */
+/** Returns an iterable that yields up to a
+ *  number of elements from the source iterable. */
 exports.take = function*(iterable, count) {
   if (count > 0)
     for (let element of iterable) {
@@ -104,18 +103,18 @@ exports.zip = function*(first, second, func) {
  *  the result. Supplying an initial value is optional. Without it, the first
  *  element is used, and if the iterable is empty, undefined is returned. */
 let aggregate = exports.aggregate = function(iterable, value, func) {
-  let ignoreFirst = false;
+  let skip = false;
   if (func === undefined) {
     func = value;
     value = undefined;
-    ignoreFirst = true;
+    skip = true;
   }
   // TODO: Would use this instead, but Node.JS/V8 apparently
   //       doesn't support this kind of destructuring yet.
-  //   [ func, value, ignoreFirst ] = [ value, undefined, true ];
+  //   [ func, value, skip ] = [ value, undefined, true ];
   for (let element of iterable)
-    value = (ignoreFirst ? (ignoreFirst = false, element)
-                         : func(value, element));
+    value = (skip ? (skip = false, element)
+                  : func(value, element));
   return value;
 };
 
@@ -130,4 +129,4 @@ exports.min = (iterable) => aggregate(iterable, (a, b) => ((b < a) ? b : a));
 
 /** Returns a string of all elements in the iterable
  *  joined together seperated by the specified string. */
-exports.join = (iterable, seperator = ", ") => aggregate(iterable, (a, b) => `${ a }${ seperator }${ b }`);
+exports.join = (iterable, seperator = ", ") => ("" + aggregate(iterable, (a, b) => `${ a }${ seperator }${ b }`));
