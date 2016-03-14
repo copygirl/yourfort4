@@ -188,8 +188,14 @@ module.exports = class Matrix {
     
     let result = Matrix.zero(other.columns, this.rows);
     for (let x = 0; x < result.columns; x++)
-      for (let y = 0; y < result.rows; y++)
-        result.set(x, y, Vector.create(...this.getRow(y)).dot(...other.getColumn(x)));
+      for (let y = 0; y < result.rows; y++) {
+        let s = 0;
+        for (let i = 0; i < this.columns; i++)
+          s += this.elements[this._index(i, y)] * other.elements[other._index(x, i)];
+        result.elements[result._index(x, y)] = s;
+        // Fancy version - unfortunately too slow:
+        // result.set(x, y, Vector.create(...this.getRow(y)).dot(...other.getColumn(x)));
+      }
     return result;
   }
   
