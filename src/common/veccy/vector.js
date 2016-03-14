@@ -15,8 +15,8 @@ module.exports = class Vector {
   }
   
   static create(...elements) {
-    if (elements.length < 2)
-      throw new Error("Vector must have at least 2 dimensions");
+    if (elements.length < 1)
+      throw new Error("Vector must have at least 1 dimension");
     if (any(elements, e => (typeof e != "number")))
       throw new Error(`Attempting to create Vector with non-number elements ([${ join(map(elements, type), ", ") }])`)
     return new Vector(elements);
@@ -109,6 +109,6 @@ module.exports = class Vector {
   
   [Symbol.iterator]() { return this.elements[Symbol.iterator](); }
   
-  toString() { return `[${ this.elements.join(", ") }]`; }
+  toString() { return `[Vector(${ this.dimensions }) ${ this.elements.join(", ") } ]`; }
   
 };
