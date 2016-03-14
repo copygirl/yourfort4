@@ -2,7 +2,7 @@
 
 let Side     = require("./Side");
 let DataType = require("./DataType");
-let { type } = require("../utility");
+let { type, UnexpectedTypeError } = require("../utility");
 
 
 let packets = {
@@ -77,7 +77,7 @@ module.exports = class PacketType {
     switch (typeof idOrName) {
       case "number": return packets.byId[idOrName];
       case "string": return packets.byName[idOrName.toLowerCase()];
-      default: throw new Error(`Expected number or string, got '${ type(idOrName) }'`);
+      default: throw new UnexpectedTypeError(idOrName, Number, String);
     }
   }
   

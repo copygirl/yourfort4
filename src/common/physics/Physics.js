@@ -3,7 +3,7 @@
 let Entity       = require("../Entity");
 let { Collider } = require("./colliders");
 let CollisionMap = require("./CollisionMap");
-let { implement, type } = require("../utility");
+let { implement, type, UnexpectedTypeError } = require("../utility");
 
 
 let updateEntityCollider = function(entity) {
@@ -49,7 +49,7 @@ implement(Entity, {
   set collider(value) {
     if (value == this[COLLIDER]) return;
     if ((value != null) && (typeof value != "string") && !(value instanceof Collider))
-      throw new Error(`Expected Collider, String or null, got '${ type(value) }'`);
+      throw new UnexpectedTypeError(value, Collider, String, null);
     this[COLLIDER] = Collider.create(value, this);
     if (this.main == null) return;
     this.main.physics.collision[(value != null) ? "update" : "remove"](this);

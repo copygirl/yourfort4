@@ -1,5 +1,7 @@
 "use strict";
 
+let { UnexpectedTypeError } = require("../utility");
+
 let DataType = module.exports = class DataType {
   
   // read: (view, index) => [ value, size ]
@@ -45,7 +47,7 @@ let simple = (access, size, verify) =>
 
 let checkInt = (signed, bits) => (value) => {
   if (typeof value != "number")
-    throw new Error(`Expected number, got '${ typeof value }'`);
+    throw new UnexpectedTypeError(value, Number);
   if (!Number.isSafeInteger)
     throw new Error(`Number '${ value }' is not an integer`);
   
@@ -57,7 +59,7 @@ let checkInt = (signed, bits) => (value) => {
 
 let checkIsNumber = (value) => {
   if (typeof value != "number")
-    throw new Error(`Expected number, got '${ typeof value }'`);
+    throw new UnexpectedTypeError(value, Number);
 };
 
 

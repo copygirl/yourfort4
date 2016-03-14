@@ -4,7 +4,7 @@ let Side         = require("./Side");
 let PacketType   = require("./PacketType");
 let PacketReader = require("./PacketReader");
 let PacketWriter = require("./PacketWriter");
-let { extend, type } = require("../utility");
+let { extend, type, UnexpectedTypeError } = require("../utility");
 
 let reader = new PacketReader();
 let writer = new PacketWriter();
@@ -22,7 +22,7 @@ let Packet = module.exports = class Packet {
     if (typeof packetType == "string")
       packetType = PacketType.findOrThrow(packetType);
     if (!(packetType instanceof PacketType))
-      throw new Error(`Expected PacketType or string, got '${ type(packetType) }'`);
+      throw new UnexpectedTypeError(packetType, PacketType, String);
     
     packetType.verify(payload);
     writer.write(packetType, payload, side);
@@ -34,7 +34,7 @@ let Packet = module.exports = class Packet {
       view = new DataView(data);
     else if (data instanceof Uint8Array)
       view = new DataView(data.buffer, data.byteOffset, data.byteLength);
-    else throw new Error(`Expected ArrayBuffer or Uint8Array, got '${ type(data) }'`);
+    else throw new UnexpectedTypeError(data, ArrayBuffer, Uint8Array);
     
     let [ packetType, payload ] = reader.read(view, side);
     

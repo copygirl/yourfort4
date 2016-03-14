@@ -1,4 +1,5 @@
-let { type, rangeCheck, repeat, range, map, join } = require("../utility");
+let { type, rangeCheck, repeat, range,
+      map, join, UnexpectedTypeError } = require("../utility");
 let Vector = require("./Vector");
 
 
@@ -23,7 +24,7 @@ module.exports = class Matrix {
       let rowLength = 0;
       for (let element of row) {
         if (typeof element != "number")
-          throw new Error(`Expected number, got '${ type(element) }'`)
+          throw new UnexpectedTypeError(element, Number);
         elements.push(element);
         rowLength++;
       }
@@ -182,7 +183,7 @@ module.exports = class Matrix {
     if (other instanceof Vector)
       other = new Matrix(other.dimensions, 1, other.elements.slice(0));
     if (!(other instanceof Matrix))
-      throw new Error(`Expected number, Vector or Matrix, got ${ type(other) }`);
+      throw new UnexpectedTypeError(other, Number, Vector, Matrix);
     if (this.columns != other.rows)
       throw new Error(`Can't multiply matrixes of sizes ${ this._size } and ${ other._size })`);
     

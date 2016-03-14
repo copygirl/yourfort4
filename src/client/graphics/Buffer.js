@@ -1,6 +1,6 @@
 "use strict";
 
-let { type, flatten } = require("../../common/utility");
+let { type, flatten, UnexpectedTypeError } = require("../../common/utility");
 
 let typedArrayLookup = {
   BYTE: Int8Array,
@@ -64,7 +64,7 @@ module.exports = class Buffer {
             break;
           }
       if (pointerType == null)
-        throw new Error(`Expected data to be TypedArray or Array, got '${ type(data) }'`);
+        throw new UnexpectedTypeError(data, "TypedArray", Array);
     }
     
     this.pointerSize = pointerSize;
