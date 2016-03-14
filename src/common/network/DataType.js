@@ -45,14 +45,11 @@ let simple = (access, size, verify) =>
     (view, index, value) => [ view[`set${ access }`](index, value), size ],
     size, verify ];
 
-let checkInt = (signed, bits) => (value) => {
+let checkInt = (min, max) => (value) => {
   if (typeof value != "number")
     throw new UnexpectedTypeError(value, Number);
   if (!Number.isSafeInteger)
     throw new Error(`Number '${ value }' is not an integer`);
-  
-  let min = (signed ? -(1 << (bits - 1)) : 0);
-  let max = (1 << bits - +signed) - 1;
   if ((value < min) || (value > max))
     throw new Error(`Integer '${ value }' is not in valid range (${ min } - ${ max })`);
 };
@@ -63,11 +60,11 @@ let checkIsNumber = (value) => {
 };
 
 
-DataType.define("byte",   ...simple("Uint8",   1, checkInt(false,  8)));
-DataType.define("sbyte",  ...simple("Int8",    1, checkInt( true,  8)));
-DataType.define("short",  ...simple("Uint16",  2, checkInt( true, 16)));
-DataType.define("ushort", ...simple("Int16",   2, checkInt(false, 16)));
-DataType.define("int",    ...simple("Uint32",  4, checkInt( true, 32)));
-DataType.define("uint",   ...simple("Int32",   4, checkInt(false, 32)));
+DataType.define("byte",   ...simple("Uint8",   1, checkInt(    0, 0xFF)));
+DataType.define("sbyte",  ...simple("Int8",    1, checkInt(-0x80, 0x7F)));
+DataType.define("short",  ...simple("Uint16",  2, checkInt(      0, 0xFFFF)));
+DataType.define("ushort", ...simple("Int16",   2, checkInt(-0x8000, 0x7FFF)));
+DataType.define("int",    ...simple("Uint32",  4, checkInt(          0, 0xFFFFFFFF)));
+DataType.define("uint",   ...simple("Int32",   4, checkInt(-0x80000000, 0x7FFFFFFF)));
 DataType.define("float",  ...simple("Float32", 4, checkIsNumber));
 DataType.define("double", ...simple("Float64", 8, checkIsNumber));
