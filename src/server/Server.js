@@ -56,7 +56,7 @@ for (let x = 16; x < 240; x += 16) {
   server.add(extend(new Block(), { pos: [ x,       16 ], color: [ 1, 0, 0, 1 ] }));
   server.add(extend(new Block(), { pos: [ x, 160 - 16 ], color: [ 0, 1, 0, 1 ] }));
 }
-for (let y = 32; x < 160 - 16; x += 16) {
+for (let y = 32; y < 160 - 16; y += 16) {
   server.add(extend(new Block(), { pos: [       16, y ], color: [ 0, 0, 1, 1 ] }));
   server.add(extend(new Block(), { pos: [ 240 - 16, y ], color: [ 1, 1, 0, 1 ] }));
 }

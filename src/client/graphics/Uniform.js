@@ -1,6 +1,6 @@
 "use strict";
 
-let { Matrix } = require("../../common/veccy");
+let { Vector, Matrix } = require("../../common/veccy");
 
 module.exports = class Uniform {
   
@@ -17,19 +17,28 @@ module.exports = class Uniform {
   setf(...values) {
     const GL = this.program.graphics.gl;
     
-    if (values[0] instanceof Matrix) {
-      GL[`uniformMatrix${ values[0].elements.length }fv`](
-        this.handle, false, ...values[0].elements);
+    if ((values.length == 1) && (typeof values[0] != "number"))
+      values = values[0];
+    if (values instanceof Vector)
+      values = values.elements;
+    if (values instanceof Matrix) {
+      if ((values.columns != values.rows) || (values.columns > 4))
+        throw new Error(`Invalid matrix size (${ columns },${ rows })`);
+      GL[`uniformMatrix${ values.columns }fv`](
+        this.handle, false, values.elements);
       return;
     }
     
-    GL[`uniform${ values.length }fv`](this.handle, ...values);
+    GL[`uniform${ values.length }fv`](this.handle, values);
   }
   
   seti(...values) {
     const GL = this.program.graphics.gl;
     
-    GL[`uniform${ values.length }iv`](this.handle, ...values);
+    if ((values.length == 1) && (typeof values[0] != "number"))
+      values = values[0];
+    
+    GL[`uniform${ values.length }iv`](this.handle, values);
   }
   
 };

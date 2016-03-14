@@ -1,3 +1,5 @@
+"use strict";
+
 let colliders = new Map();
 
 module.exports = class Collider {

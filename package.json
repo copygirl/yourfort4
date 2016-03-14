@@ -11,6 +11,6 @@
   },
   "scripts": {
     "compile": "node --harmony_destructuring compile",
-    "start": "node --harmony_destructuring src/server"
+    "start": "node --harmony_default_parameters --harmony_destructuring --harmony_rest_parameters src/server"
   }
 }

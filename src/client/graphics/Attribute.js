@@ -3,7 +3,7 @@
 module.exports = class Attribute {
   
   constructor(program, name) {
-    const GL = program.graphics.GL;
+    const GL = program.graphics.gl;
     
     this.program = program;
     this.name    = name;
@@ -14,7 +14,7 @@ module.exports = class Attribute {
   }
   
   pointer(size, type, normalize = false, stride = 0, offset = 0) {
-    this.program.graphics.vertexAttribPointer(
+    this.program.graphics.gl.vertexAttribPointer(
       this.handle, size, type, normalize, stride, offset);
   }
   

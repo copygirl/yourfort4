@@ -31,8 +31,8 @@ module.exports = class SpriteRenderer {
     
     GFX.push();
     
-    let scale     = Matrix.Scale(...entity.size, 1);
-    let translate = Matrix.Translation(...map(entity.pos, Math.round), 0);
+    let scale     = Matrix.scale(...entity.size, 1);
+    let translate = Matrix.translation(...map(entity.pos, Math.round), 0);
     
     GFX.viewMatrix = GFX.viewMatrix.multiply(scale).multiply(translate);
     GFX.program.uniforms.uMVMatrix.setf(GFX.viewMatrix);

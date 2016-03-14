@@ -14,7 +14,7 @@ module.exports = class Program {
     this.uniforms   = { };
     this.attributes = { };
     
-    for (let shader in shaders)
+    for (let shader of shaders)
       GL.attachShader(this.handle, shader.handle);
     
     GL.linkProgram(this.handle);

@@ -66,14 +66,14 @@ module.exports = class Graphics {
     this.canvas.style.width  = `${ width * scale }px`
     this.canvas.style.height = `${ height * scale }px`
     this.gl.viewport(0, 0, width, height);
-    this.projMatrix = makeOrtho(0, width, height, 0, -128, 128);
+    this.projMatrix = Matrix.ortho(0, width, height, 0, -128, 128);
   }
   
   
   init() {
     const GL = this.gl;
     
-    GL.enable(gl.BLEND);
+    GL.enable(GL.BLEND);
     GL.blendFunc(GL.SRC_ALPHA, GL.ONE_MINUS_SRC_ALPHA);
     GL.enable(GL.DEPTH_TEST);
     GL.depthFunc(GL.LEQUAL);
@@ -84,9 +84,9 @@ module.exports = class Graphics {
       this.game.assets.shaders["default.fs"]);
     this.program.use();
     
-    for (let uniform in [ "uPMatrix", "uMVMatrix", "uColor", "uSampler" ])
+    for (let uniform of [ "uPMatrix", "uMVMatrix", "uColor", "uSampler" ])
       this.program.uniform(uniform);
-    for (let attr in [ "aVertexPosition", "aTextureCoord" ])
+    for (let attr of [ "aVertexPosition", "aTextureCoord" ])
       this.program.attribute(attr);
     
     requestAnimationFrame(this.render.bind(this));
@@ -111,10 +111,10 @@ module.exports = class Graphics {
     GL.clearColor(...this.background);
     GL.clear(GL.COLOR_BUFFER_BIT | GL.DEPTH_BUFFER_BIT);
     
-    this.program.uniforms.uPMatrix.setf(...this.projMatrix.elements);
-    this.program.uniforms.uMVMatrix.setf(...this.viewMatrix.elements);
+    this.program.uniforms.uPMatrix.setf(this.projMatrix);
+    this.program.uniforms.uMVMatrix.setf(this.viewMatrix);
     
-    for (let entity in this.renderable) {
+    for (let entity of this.renderable) {
       let renderer = this.renderers[entity.renderer];
       if (renderer != null) renderer.render(entity);
     }

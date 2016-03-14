@@ -18,7 +18,7 @@ module.exports = class PacketType {
     this.name    = name;
     this.side    = side;
     
-    if (typeof id == "number") throw new Error(
+    if (typeof id != "number") throw new Error(
       `Expected number for packet ID, got ${ type(id) }`);
     if ((id < 0) || (id > 255)) throw new Error(
       `Packet ID '${ id }' isn't in the valid range (0 - 255)`);
@@ -31,8 +31,8 @@ module.exports = class PacketType {
     // Find the datatypes that make up this packet, throwing an error if one's invalid.
     // Also if all datatypes have a static size, keep track of it in this packet type.
     this.size = 0;
-    this.payload = payload.map((field) => {
-      for (let name of field) {
+    this.payload = payload.map(field => {
+      for (let name in field) {
         let dataType = DataType.findOrThrow(field[name]);
         if (this.size != null) {
           if (typeof dataType.size == "number")

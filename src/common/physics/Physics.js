@@ -1,3 +1,5 @@
+"use strict";
+
 let Entity       = require("../Entity");
 let { Collider } = require("./colliders");
 let CollisionMap = require("./CollisionMap");
@@ -58,7 +60,8 @@ implement(Entity, {
 module.exports = class Physics {
   
   constructor(main) {
-    this.updating = new Set();
+    this.main      = main;
+    this.updating  = new Set();
     this.collision = new CollisionMap();
     
     this.main.on("spawn", (entity) => {

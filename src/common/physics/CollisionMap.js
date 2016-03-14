@@ -23,10 +23,11 @@ module.exports = class CollisionMap {
     let newNodes = new Map();
     
     for (let node of this.nodesForBBox(entity.collider.boundingBox))
-      newNodes.add(node, oldNodes.delete(node));
+      newNodes.set(node, ((oldNodes != null) ? oldNodes.delete(node) : false));
     
-    for (let [ node ] of oldNodes)
-      this.removeEntityFromNode(entity, node);
+    if (oldNodes = null)
+      for (let [ node ] of oldNodes)
+        this.removeEntityFromNode(entity, node);
     
     for (let [ node, isOld ] of newNodes)
       if (!isOld) {

@@ -18,24 +18,19 @@ module.exports = class Buffer {
   constructor(graphics, type, data, hint, pointerSize, pointerType) {
     const GL = graphics.gl;
     
+    if (type instanceof Array)
+      [ pointerType, pointerSize, hint, data, type ] =
+        [ pointerSize, hint, data, type, GL.ARRAY_BUFFER ];
+    
     this.graphics = graphics;
     this.type     = type;
-    
-    if (type.length != null) {
-      pointerType = pointerSize;
-      pointerSize = hint;
-      hint = data;
-      data = type;
-      type = GL.ARRAY_BUFFER;
-    }
-    
-    this.handle = GL.createBuffer();
+    this.handle   = GL.createBuffer();
     if (data != null)
       this.data(data, hint, pointerSize, pointerType);
   }
   
   bind() {
-    this.graphics.bindBuffer(this.type, this.handle);
+    this.graphics.gl.bindBuffer(this.type, this.handle);
   }
   
   unbind() {
@@ -45,38 +40,35 @@ module.exports = class Buffer {
   data(data, hint, pointerSize, pointerType) {
     const GL = this.graphics.gl;
     
-    this.pointerSize = pointerSize;
-    this.pointerType = pointerType;
-    hint = (hint || GL.STATIC_DRAW);
+    if (hint == null) hint = GL.STATIC_DRAW;
     
     if (data instanceof Array) {
-      if (this.pointerType == null)
-        this.pointerType = ((this.type == GL.ELEMENT_ARRAY_BUFFER) ? GL.UNSIGNED_SHORT : GL.FLOAT);
+      if (pointerType == null)
+        pointerType = ((this.type == GL.ELEMENT_ARRAY_BUFFER) ? GL.UNSIGNED_SHORT : GL.FLOAT);
+      if (pointerSize == null)
+        pointerSize = ((data[0] instanceof Array) ? data[0].length : 1);
+      data = flatten(data);
       
-      let newData = [ ];
-      for (let element of data) {
-        flatten(data, newData);
-        if (this.pointerSize == null)
-          this.pointerSize = newData.length;
-      }
-      
-      for (let pointerType in typedArrayLookup)
-        if (this.pointerType == GL[pointerType]) {
-          data = new typedArrayLookup[pointerType](data);
+      for (let pt in typedArrayLookup)
+        if (pointerType == GL[pt]) {
+          data = new typedArrayLookup[pt](data);
           break;
         }
       if (data instanceof Array) // If data is unchanged.
         throw new Error("Unsupported pointer type");
     } else {
       if (data != null)
-        for (let pointerType in typedArrayLookup)
-          if (typedArrayLookup[pointerType] == data.constuctor) {
-            this.pointerType = GL[pointerType];
+        for (let pt in typedArrayLookup)
+          if (typedArrayLookup[pt] == data.constuctor) {
+            pointerType = GL[pt];
             break;
           }
-      if (this.pointerType == null)
+      if (pointerType == null)
         throw new Error(`Expected data to be TypedArray or Array, got '${ type(data) }'`);
     }
+    
+    this.pointerSize = pointerSize;
+    this.pointerType = pointerType;
     
     this.bind();
     GL.bufferData(this.type, data, hint);

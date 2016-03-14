@@ -21,7 +21,7 @@ module.exports = class Shader {
     GL.compileShader(this.handle);
     
     this.info = GL.getShaderInfoLog(this.handle);
-    if (!GL.getShaderParameter(this.handle, Gl.COMPILE_STATUS))
+    if (!GL.getShaderParameter(this.handle, GL.COMPILE_STATUS))
       throw new Error(`Error compiling shader '${ this.name }': ${ this.info }`);
   }
   
