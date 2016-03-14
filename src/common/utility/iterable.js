@@ -105,8 +105,14 @@ exports.zip = function*(first, second, func) {
  *  element is used, and if the iterable is empty, undefined is returned. */
 let aggregate = exports.aggregate = function(iterable, value, func) {
   let ignoreFirst = false;
-  if (func === undefined)
-    [ func, value, ignoreFirst ] = [ value, undefined, true ];
+  if (func === undefined) {
+    func = value;
+    value = undefined;
+    ignoreFirst = true;
+  }
+  // TODO: Would use this instead, but Node.JS/V8 apparently
+  //       doesn't support this kind of destructuring yet.
+  //   [ func, value, ignoreFirst ] = [ value, undefined, true ];
   for (let element of iterable)
     value = (ignoreFirst ? (ignoreFirst = false, element)
                          : func(value, element));
