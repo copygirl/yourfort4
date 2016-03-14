@@ -1,9 +1,9 @@
 "use strict";
 
 /** Returns if the specified object is iterable
- *  (= has property [System.iterable] set to a function). */
+ *  (= has property [System.iterator] set to a function). */
 exports.isIterable = function(obj) {
-  return ((obj != null) && (typeof obj[Symbol.iterable] == "function"));
+  return ((obj != null) && (typeof obj[Symbol.iterator] == "function"));
 };
 
 
@@ -89,6 +89,8 @@ exports.skip = function*(iterable, count) {
 /** Returns an iterable that merges elements from both iterables by taking one
  *  element from each, passing them to the function, and yielding the result. */
 exports.zip = function*(first, second, func) {
+  first  = first[Symbol.iterator]();
+  second = second[Symbol.iterator]();
   while (true) {
     let { value: element1, done: done1 } = first.next();
     let { value: element2, done: done2 } = second.next();
