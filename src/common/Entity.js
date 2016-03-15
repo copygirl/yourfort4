@@ -26,6 +26,6 @@ module.exports = class Entity {
   // is spawned, then called every tick.
   // update() { ... }
   
-  toString() { return "[" + this.contructor.name + ((this.spawned) ? " (" + this.id + ")" : "") + "]"; }
+  toString() { return "[" + this.constructor.name + ((this.spawned) ? " (" + this.id + ")" : "") + "]"; }
   
 };

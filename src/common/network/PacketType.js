@@ -19,7 +19,7 @@ module.exports = class PacketType {
     this.side    = side;
     
     if (typeof id != "number") throw new Error(
-      `Expected number for packet ID, got ${ type(id) }`);
+      `Expected Number for packet ID, got ${ type(id) }`);
     if ((id < 0) || (id > 255)) throw new Error(
       `Packet ID '${ id }' isn't in the valid range (0 - 255)`);
     if (PacketType.find[id] != null) throw new Error(
@@ -58,8 +58,6 @@ module.exports = class PacketType {
     return size;
   }
   
-  toString() { return `[PacketType ${ this.name.toUpperCase() }]`; }
-  
   verify(payload) {
     if (Object.keys(payload).length > Object.keys(this.payload).length)
       throw new Error(`Invalid payload for ${ this }: Too many fields`);
@@ -72,6 +70,9 @@ module.exports = class PacketType {
         `Error validating field '${ name }' of ${ this }:\n${ e }`); }
     }
   }
+  
+  toString() { return `[PacketType ${ this.name.toUpperCase() }]`; }
+  
   
   static find(idOrName) {
     switch (typeof idOrName) {
@@ -88,8 +89,6 @@ module.exports = class PacketType {
     return packetType;
   }
   
-  static define(...args) {
-    return new PacketType(...args);
-  }
+  static define(...args) { return new PacketType(...args); }
   
 };

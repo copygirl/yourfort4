@@ -25,7 +25,7 @@ let Packet = module.exports = class Packet {
       throw new UnexpectedTypeError(packetType, PacketType, String);
     
     packetType.verify(payload);
-    writer.write(packetType, payload, side);
+    return writer.write(packetType, payload, side);
   }
   
   static parse(target, data, side = Side.BOTH) {
@@ -39,7 +39,7 @@ let Packet = module.exports = class Packet {
     let [ packetType, payload ] = reader.read(view, side);
     
     packetType.exec(target, payload);
-    // throw new Error(`Error while executing packet '${ packetType }':\n${ e }");
+    // throw new Error(`Error while executing packet ${ packetType }:\n${ e }`);
   }
   
 };

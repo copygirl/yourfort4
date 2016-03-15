@@ -33,16 +33,14 @@ let DataType = module.exports = class DataType {
     else throw new Error(`Unknown data type '${ name }'`);
   }
   
-  static define(...args) {
-    return new DataType(...args);
-  }
+  static define(...args) { return new DataType(...args); }
   
 };
 
 
 let simple = (access, size, verify) =>
   [ (view, index) => [ view[`get${ access }`](index), size ],
-    (view, index, value) => [ view[`set${ access }`](index, value), size ],
+    (view, index, value) => (view[`set${ access }`](index, value), size),
     size, verify ];
 
 let checkInt = (min, max) => (value) => {

@@ -1,9 +1,9 @@
 "use strict";
 
 let { EventEmitter } = require("events");
-let Entity = require("../common/Entity");
+let Entity           = require("../common/Entity");
 let { Packet, Side } = require("../common/network");
-let { implement } = require("../common/utility");
+let { implement }    = require("../common/utility");
 
 
 let url = "ws://localhost:42006/";

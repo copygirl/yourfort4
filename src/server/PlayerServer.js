@@ -12,7 +12,7 @@ module.exports = class PlayerServer extends Player {
     this.loggedIn  = false;
     
     setTimeout(
-      () => { if (this.loggedIn) this.disconnect("Login timeout"); },
+      () => { if (!this.loggedIn) this.disconnect("Login timeout"); },
       1000);
   }
   

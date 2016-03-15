@@ -15,7 +15,7 @@ module.exports = class PacketReader {
     let packetType = PacketType.findOrThrow(view.getUint8(0));
     
     if ((side & packetType.side) == 0)
-      throw new Error(`Received ${ packetType } on invalid side ${ Side.toString(packetType.side) }`);
+      throw new Error(`Received ${ packetType } on invalid side ${ Side.toString(side) }`);
     
     let payload = { };
     let index = 1;
