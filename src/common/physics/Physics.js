@@ -3,7 +3,7 @@
 let Entity       = require("../Entity");
 let { Collider } = require("./colliders");
 let CollisionMap = require("./CollisionMap");
-let { implement, type, UnexpectedTypeError } = require("../utility");
+let { implement, type, zip, UnexpectedTypeError } = require("../utility");
 
 
 let updateEntityCollider = function(entity) {
@@ -89,11 +89,12 @@ module.exports = class Physics {
       if (dVec[0] > 0) mBox.maxX += dVec[0];
       if (dVec[1] > 0) mBox.maxY += dVec[1];
       if (dVec[0] < 0) mBox.minX += dVec[0];
-      if (dVec[1] < 0) mBox.minY -= dVec[1];
+      if (dVec[1] < 0) mBox.minY += dVec[1];
       
       let solids = [ ...this.collision.entitiesInBBox(mBox, true) ];
       
-      // TODO!
+      if (solids.length == 0)
+        entity.pos = [ ...zip(entity.pos, entity.speed, (a, b) => a + b) ];
     }
   }
   

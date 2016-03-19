@@ -41,6 +41,11 @@ let Box = module.exports = class Box extends Collider {
     this.maxY = (entity.pos[1] + entity.size[1] / 2);
   }
   
+  intersects(other) {
+    return ((this.minX <= other.maxX) && (this.maxX >= other.minX) &&
+            (this.minY <= other.maxY) && (this.maxY >= other.minY));
+  }
+  
   ray(p, d) {
     let result;
     if ((result = wallTest(p, d, 0, this.minX, this.minY, this.maxY, [ -1, 0 ])) != null) return result;
@@ -60,6 +65,8 @@ let Box = module.exports = class Box extends Collider {
   }
   
   clone() { return new Box(this.minX, this.minY, this.maxX, this.maxY); }
+  
+  toString() { return `[Box (${ this.minX },${ this.minY }),(${ this.maxX },${ this.maxY })]`; }
   
 };
 
