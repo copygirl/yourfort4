@@ -3,36 +3,47 @@
 let Entity       = require("../Entity");
 let { Collider } = require("./colliders");
 let CollisionMap = require("./CollisionMap");
-let { implement, type, zip, UnexpectedTypeError } = require("../utility");
+let { Vector }   = require("../veccy");
+let { implement, type, Iterable, UnexpectedTypeError } = require("../utility");
 
 
 let updateEntityCollider = function(entity) {
   if ((entity.main == null) || (entity.collider == null)) return;
-  this.main.physics.collision.update(entity);
+  entity.main.physics.collision.update(entity);
 };
 
 
 const POS      = Symbol("pos");
 const SIZE     = Symbol("size");
+const SPEED    = Symbol("speed");
+const ACC      = Symbol("acc");
+
 const PHYSICS  = Symbol("physics");
 const COLLIDER = Symbol("collider");
 
 implement(Entity, {
-  speed: [ 0, 0 ],
-  acc:   [ 0, 240 ],
   
-  [POS]: [ 0, 0 ],
+  [POS]: Vector.create(0, 0),
   get pos() { return this[POS]; },
   set pos(value) {
-    this[POS] = value;
+    this[POS] = Vector.toVector(value);
     updateEntityCollider(this);
   },
-  [SIZE]: [ 0, 0 ],
+  
+  [SIZE]: Vector.create(0, 0),
   get size() { return this[SIZE]; },
   set size(value) {
-    this[SIZE] = value;
+    this[SIZE] = Vector.toVector(value);
     updateEntityCollider(this);
   },
+  
+  [SPEED]: Vector.create(0, 0),
+  get speed() { return this[SPEED]; },
+  set speed(value) { this[SPEED] = Vector.toVector(value); },
+
+  [ACC]: Vector.create(0, 240),
+  get acc() { return this[ACC]; },
+  set acc(value) { this[ACC] = Vector.toVector(value); },
   
   [PHYSICS]: false,
   get physics() { return this[PHYSICS]; },
@@ -50,9 +61,9 @@ implement(Entity, {
     if (value == this[COLLIDER]) return;
     if ((value != null) && (typeof value != "string") && !(value instanceof Collider))
       throw new UnexpectedTypeError(value, Collider, String, null);
-    this[COLLIDER] = Collider.create(value, this);
-    if (this.main == null) return;
-    this.main.physics.collision[(value != null) ? "update" : "remove"](this);
+    this[COLLIDER] = ((value instanceof Collider) ? value : Collider.create(value, this));
+    if (this.main != null)
+      this.main.physics.collision[(value != null) ? "update" : "remove"](this);
   }
 });
 
@@ -67,9 +78,10 @@ module.exports = class Physics {
     this.main.on("spawn", (entity) => {
       if (entity.physics)
         this.updating.add(entity);
-      if (entity.collider != null)
+      if (entity.collider != null) {
+        entity.collider.update(entity);
         this.collision.update(entity);
-      else if (entity.solid) throw new Error(
+      } else if (entity.solid) throw new Error(
         `${ entity } is solid, but is missing a collider`);
     });
     this.main.on("despawn", (entity) => {
@@ -81,20 +93,24 @@ module.exports = class Physics {
   
   update(delta) {
     for (let entity of this.updating) {
-      entity.speed = entity.speed.map((s, i) => s + entity.acc[i]);
-      if ((entity.speed[0] == 0) && (entity.speed[1] == 0)) break;
+      entity.speed = entity.speed.add(entity.acc.multiply(delta));
+      if (entity.speed.lengthSqr < 0.001) break;
       
-      let dVec = entity.speed.slice(0);
+      let speed = entity.speed.multiply(delta);
       let mBox = entity.collider.boundingBox.clone();
-      if (dVec[0] > 0) mBox.maxX += dVec[0];
-      if (dVec[1] > 0) mBox.maxY += dVec[1];
-      if (dVec[0] < 0) mBox.minX += dVec[0];
-      if (dVec[1] < 0) mBox.minY += dVec[1];
+      if (entity.speed[0] > 0) mBox.maxX += speed[0];
+      else mBox.minX += speed[0];
+      if (entity.speed[1] > 0) mBox.maxY += speed[1];
+      else mBox.minY += speed[1];
       
-      let solids = [ ...this.collision.entitiesInBBox(mBox, true) ];
+      let solids = this.collision.entitiesInBBox(mBox)
+        .filter(e => (e.solid && (e !== entity))).toArray();
       
-      if (solids.length == 0)
-        entity.pos = [ ...zip(entity.pos, entity.speed, (a, b) => a + b) ];
+      if (solids.length == 0) {
+        entity.pos = entity.pos.add(speed);
+        entity.collider.update(entity);
+        this.collision.update(entity);
+      } else entity.speed = [ 0, 0 ];
     }
   }
   
