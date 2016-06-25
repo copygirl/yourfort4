@@ -12,9 +12,9 @@ module.exports = class Player extends Entity {
     this.size = [ 16, 16 ];
     
     this.renderer = "sprite";
-    this.sprite = "player";
+    this.sprite   = "player";
     
-    this.physics = true
+    this.physics  = true
     this.collider = "box";
     
     this.movement = { left: false, right: false, jump: false };
@@ -24,9 +24,9 @@ module.exports = class Player extends Entity {
   get onGround() { return false; }
   
   update(delta) {
-    this.speed[0] = (this.movement.right - this.movement.left) * MOVE_SPEED;
+    this.speed = this.speed.add((this.movement.right - this.movement.left) * MOVE_SPEED, 0);
     if (this.movement.jump && this.onGround)
-      this.speed[1] = -JUMP_SPEED;
+      this.speed = this.speed.add(0, -JUMP_SPEED);
   }
   
 };
