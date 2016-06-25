@@ -9,6 +9,7 @@ let extend = exports.extend = function(target, ...sources) {
       Object.getOwnPropertyNames(source),
       Object.getOwnPropertySymbols(source));
     for (let property of properties) {
+      if (property === "prototype") continue;
       let descriptor = Object.getOwnPropertyDescriptor(source, property);
       if (descriptor != null) {
         // If it's a data descriptor (not getter/setter), just set
