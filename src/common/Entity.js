@@ -7,12 +7,12 @@ module.exports = class Entity {
     this.id   = null;
     
     //  Added by Physics
-    // pos     = [ 0, 0 ]
-    // size    = [ 0, 0 ]
-    // speed   = [ 0, 0 ]
-    // gravity = [ 0, 2 ]
-    // physics = false : If true, applies speed and gravity to entity.
-    // shape   = null  : Required for collision. May be set to "box" or null.
+    // pos      = [ 0, 0 ]
+    // size     = [ 0, 0 ]
+    // speed    = [ 0, 0 ]
+    // acc      = [ 0, 240 ]
+    // physics  = false : If true, applies speed and gravity to entity.
+    // collider = null  : Required for collision. May be set to "box" or null.
     
     //  Added by Graphics
     // renderer = null : May be set to "sprite".
