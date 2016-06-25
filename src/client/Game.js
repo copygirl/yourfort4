@@ -32,7 +32,7 @@ let Game = module.exports = class Game extends Main {
     this.worker = new Worker("worker.js");
   }
   
-  get player() { return null; } // TODO: this.client.tracking[@client.own-id]; }
+  get player() { return this.entities.get(this.client.ownId); }
   
   run(ups = 30) {
     this.assets.load("loading-screen", () => {
