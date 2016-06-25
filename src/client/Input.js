@@ -21,8 +21,8 @@ module.exports = class Input {
         Math.floor((ev.clientX - rect.left) / this.game.graphics.scale),
         Math.floor((ev.clientY - rect.top) / this.game.graphics.scale) ];
       this.mouse.inside =
-        ((0 <= this.mouse[0] < this.game.canvas.width) &&
-         (0 <= this.mouse[1] <= this.game.canvas.height));
+        ((this.mouse[0] >= 0) && (this.mouse[0] < this.game.canvas.width) &&
+         (this.mouse[1] >= 0) && (this.mouse[1] < this.game.canvas.height));
     });
     this.game.canvas.addEventListener("mouseleave", (ev) => {
       this.mouse.inside = false; });
