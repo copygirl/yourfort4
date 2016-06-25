@@ -73,31 +73,31 @@ module.exports = class Vector {
   
   clone() { return new Vector(this.elements.slice(0)); }
   
-  negate() { return Vector.create(Iterable.map(this, e => -e)); }
+  map(func) { return Vector.create(...Iterable.map(this, func)); }
+  
+  negate() { return this.map(e => -e); }
   
   normalize() {
     let l = this.length;
-    return ((l == 0) ? Vector.zero(this.dimensions)
-                     : Vector.create(Iterable.map(this, e => e / l)));
+    return ((l == 0) ? Vector.zero(this.dimensions) : this.map(e => e / l));
   }
   
   
-  multiply(f) { return Vector.create(Iterable.map(this, e => e * f)); }
+  multiply(f) { this.map(e => e * f); }
   
   
-  add(...v) {
+  zip(...v) {
+    let func = v.pop();
+    let what = ((typeof v[v.length - 1] == "string") ? v.pop() : "zip");
     v = Vector.toVector(v, true);
     if (this.dimensions != v.dimensions)
-      throw makeIncompatibleVectorsError(this, v, "add");
-    return Vector.create(Iterable.zip(this, v, (a, b) => a + b));
+      throw makeIncompatibleVectorsError(this, v, what);
+    return Vector.create(...Iterable.zip(this, v, func));
   }
   
-  subtract(...v) {
-    v = Vector.toVector(v, true);
-    if (this.dimensions != v.dimensions)
-      throw makeIncompatibleVectorsError(this, v, "subtract");
-    return Vector.create(Iterable.zip(this, v, (a, b) => a - b));
-  }
+  add(...v) { return this.zip(v, "add", (a, b) => a + b); }
+  
+  subtract(...v) { return this.zip(v, "subtract", (a, b) => a - b); }
   
   dot(...v) {
     v = Vector.toVector(v, true);
