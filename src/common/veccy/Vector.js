@@ -1,3 +1,5 @@
+"use strict";
+
 let { type, rangeCheck, Iterable } = require("../utility");
 
 

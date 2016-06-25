@@ -1,3 +1,5 @@
+"use strict";
+
 let { type, rangeCheck, UnexpectedTypeError, Iterable } = require("../utility");
 let Vector = require("./Vector");
 
