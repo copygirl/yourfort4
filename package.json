@@ -10,7 +10,7 @@
     "ws": "^0.8.1"
   },
   "scripts": {
-    "compile": "node --harmony_destructuring compile",
-    "start": "node --harmony_default_parameters --harmony_destructuring --harmony_rest_parameters src/server"
+    "compile": "node compile",
+    "start": "node --harmony_default_parameters src/server"
   }
 }
