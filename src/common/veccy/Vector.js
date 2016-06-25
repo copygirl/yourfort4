@@ -49,6 +49,17 @@ module.exports = class Vector {
   }
   
   
+  get [0]() { return this.elements[0]; }
+  get [1]() { return this.elements[1]; }
+  get [2]() { return this.elements[2]; }
+  get [3]() { return this.elements[3]; }
+  get [4]() { return this.elements[4]; }
+  get [5]() { return this.elements[5]; }
+  get [6]() { return this.elements[6]; }
+  get [7]() { return this.elements[7]; }
+  get [8]() { return this.elements[8]; }
+  get [9]() { return this.elements[9]; }
+  
   get dimensions() { return this.elements.length; }
   
   get lengthSqr() { return Iterable.map(this, e => e * e).sum(); }
