@@ -85,11 +85,12 @@ module.exports = class Vector {
   multiply(f) { return this.map(e => e * f); }
   
   
-  
-  zip(...v) {
-    let func = v.pop();
-    let what = ((typeof v[v.length - 1] == "string") ? v.pop() : "zip");
+  zip(v, what, func) {
     v = Vector.toVector(v, true);
+    if (typeof what == "function") {
+      func = what;
+      what = "zip";
+    }
     if (this.dimensions != v.dimensions)
       throw makeIncompatibleVectorsError(this, v, what);
     return Vector.create(...Iterable.zip(this, v, func));
