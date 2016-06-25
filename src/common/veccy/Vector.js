@@ -39,7 +39,7 @@ module.exports = class Vector {
   static toVector(obj, inspectArray = false) {
     if (obj instanceof Vector) return obj;
     if (obj instanceof Array) {
-      if (obj.length == 1) {
+      if (inspectArray && (obj.length == 1)) {
         if (obj[0] instanceof Vector) return obj[0];
         if (obj[0] instanceof Array) return Vector.create(...obj[0]);
       }
