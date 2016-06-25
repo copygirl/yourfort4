@@ -1,5 +1,7 @@
 "use strict";
 
+var { Iterable } = require("../utility");
+
 const NODES_SIZE = 8;
 
 module.exports = class CollisionMap {
@@ -48,19 +50,20 @@ module.exports = class CollisionMap {
   }
   
   
-  * nodesForBBox(box) {
-    for (let x = (box.left >> NODES_SIZE); x <= (box.right >> NODES_SIZE); x++)
-      for (let y = (box.top >> NODES_SIZE); y <= (box.bottom >> NODES_SIZE); y++)
-        yield "#x,#y";
+  nodesForBBox(box) {
+    return Iterable.of(function*() {
+      for (let x = (box.left >> NODES_SIZE); x <= (box.right >> NODES_SIZE); x++)
+        for (let y = (box.top >> NODES_SIZE); y <= (box.bottom >> NODES_SIZE); y++)
+          yield `${ x },${ y }`;
+    });
   }
   
-  * entitiesInBBox(box, solidOnly = false) {
-    for (let node of this.nodesForBBox(box))
-      if ((node = this.nodes.get(node)) != null)
-        for (let entity of node)
-          if ((!solidOnly || entity.solid) &&
-             box.intersects(entity.collider.boundingBox))
-            yield entity;
+  entitiesInBBox(box) {
+    return this.nodesForBBox(box)
+      .map(node => this.nodes.get(node))
+      .filter(node => (node != null))
+      .flatten(1)
+      .filter(entity => box.intersects(entity.collider.boundingBox));
   }
   
 };
