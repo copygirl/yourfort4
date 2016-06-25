@@ -82,8 +82,8 @@ module.exports = class Vector {
     return ((l == 0) ? Vector.zero(this.dimensions) : this.map(e => e / l));
   }
   
+  multiply(f) { return this.map(e => e * f); }
   
-  multiply(f) { this.map(e => e * f); }
   
   
   zip(...v) {
