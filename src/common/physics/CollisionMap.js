@@ -63,7 +63,7 @@ module.exports = class CollisionMap {
       .map(node => this.nodes.get(node))
       .filter(node => (node != null))
       .flatten(1)
-      .filter(entity => box.intersects(entity.collider.boundingBox));
+      .filter(entity => entity.collider.boundingBox.intersects(box));
   }
   
 };
