@@ -1,6 +1,6 @@
 "use strict";
 
-let { type, rangeCheck, Iterable } = require("../utility");
+let { type, implement, rangeCheck, Iterable } = require("../utility");
 
 
 let makeIncompatibleVectorsError = function(a, b, what) {
@@ -8,7 +8,7 @@ let makeIncompatibleVectorsError = function(a, b, what) {
 };
 
 
-module.exports = class Vector {
+let Vector = module.exports = class Vector {
   
   constructor(elements) {
     this.elements = elements;
@@ -48,17 +48,6 @@ module.exports = class Vector {
     throw new Error(`Can't convert object of type ${ type(obj) } to Vector`);
   }
   
-  
-  get [0]() { return this.elements[0]; }
-  get [1]() { return this.elements[1]; }
-  get [2]() { return this.elements[2]; }
-  get [3]() { return this.elements[3]; }
-  get [4]() { return this.elements[4]; }
-  get [5]() { return this.elements[5]; }
-  get [6]() { return this.elements[6]; }
-  get [7]() { return this.elements[7]; }
-  get [8]() { return this.elements[8]; }
-  get [9]() { return this.elements[9]; }
   
   get dimensions() { return this.elements.length; }
   
@@ -124,3 +113,8 @@ module.exports = class Vector {
   toString() { return `[Vector(${ this.dimensions }) ${ this.elements.join(", ") } ]`; }
   
 };
+
+// Define indexed accessors:
+for (let i = 0; i < 10; i++) {
+  implement(Vector, { get [i]() { return this.elements[i]; } });
+}
