@@ -150,8 +150,8 @@ let Iterable = module.exports = class Iterable {
   }
   /** Returns if the Iterable is empty. */
   static empty(iterable) {
-    for (let _ of iterable) return true;
-    return false;
+    for (let _ of iterable) return false;
+    return true;
   }
   
   /** Returns if all elements of the Iterable satisfy the function. */
