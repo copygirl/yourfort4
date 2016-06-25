@@ -71,8 +71,9 @@ let Iterable = module.exports = class Iterable {
   
   /** Returns if all elements of the Iterable satisfy the function. */
   all(test) { return Iterable.all(this, test); }
-  /** Returns if at least one of the Iterable's elements satisfies the function. */
-  any(test) { return Iterable.any(this, test); }
+  /** Returns if at least one of the Iterable's elements satisfies the function.
+   *  If no function is supplied, returns true simply if there is any elements. */
+  any(test = null) { return Iterable.any(this, test); }
   
   /** Returns the first element of the Iterable that matches the
    *  specified function (or any element if omitted), or the
@@ -160,10 +161,11 @@ let Iterable = module.exports = class Iterable {
       if (!test(element)) return false;
     return true;
   }
-  /** Returns if at least one of the Iterable's elements satisfies the function. */
-  static any(iterable, test) {
+  /** Returns if at least one of the Iterable's elements satisfies the function.
+   *  If no function is supplied, returns true simply if there is any elements. */
+  static any(iterable, test = null) {
     for (let element of iterable)
-      if (test(element)) return true;
+      if ((test == null) || test(element)) return true;
     return false;
   }
   
