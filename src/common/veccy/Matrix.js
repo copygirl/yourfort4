@@ -1,5 +1,4 @@
-let { type, rangeCheck, repeat, range,
-      map, join, UnexpectedTypeError } = require("../utility");
+let { type, rangeCheck, UnexpectedTypeError, Iterable } = require("../utility");
 let Vector = require("./Vector");
 
 
@@ -73,9 +72,9 @@ module.exports = class Matrix {
     let y = z.cross(x).normalize();
     
     let m = Matrix.identity(4);
-    m.setRow(0, ...repeat(x, 3));
-    m.setRow(1, ...repeat(y, 3));
-    m.setRow(2, ...repeat(z, 3));
+    m.setRow(0, Iterable.repeat(x, 3));
+    m.setRow(1, Iterable.repeat(y, 3));
+    m.setRow(2, Iterable.repeat(z, 3));
     
     let t = Matrix.identity(4);
     t.setColumn(3, ...eye.negate());
@@ -202,8 +201,9 @@ module.exports = class Matrix {
   
   
   toString() { return `[Matrix${ this._size } ${
-      join(map(range(0, this.rows), row =>
-        `[ ${ join(this.getColumn(row)) } ]`))
+      Iterable.range(0, this.rows)
+        .map((row) => `[ ${ Iterable.join(this.getColumn(row)) } ]`)
+        .join()
     } ] `; }
   
 };

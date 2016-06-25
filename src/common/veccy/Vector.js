@@ -1,6 +1,4 @@
-let { type, rangeCheck,
-      repeat, any, map, zip,
-      aggregate, sum, join } = require("../utility");
+let { type, rangeCheck, Iterable } = require("../utility");
 
 
 let makeIncompatibleVectorsError = function(a, b, what) {
@@ -17,16 +15,16 @@ module.exports = class Vector {
   static create(...elements) {
     if (elements.length < 1)
       throw new Error("Vector must have at least 1 dimension");
-    if (any(elements, e => (typeof e != "number")))
-      throw new Error(`Attempting to create Vector with non-number elements ([${ join(map(elements, type), ", ") }])`)
+    if (Iterable.any(elements, e => (typeof e != "number")))
+      throw new Error(`Attempting to create Vector with non-number elements ([${ Iterable.map(elements, type).join(", ") }])`)
     return new Vector(elements);
   }
   
   static zero(dimensions) {
-    return Vector.create(...repeat(0, dimensions)); }
+    return Vector.create(Iterable.repeat(0, dimensions)); }
   
   static one(dimensions) {
-    return Vector.create(...repeat(1, dimensions)); }
+    return Vector.create(Iterable.repeat(1, dimensions)); }
   
   static unit(dimensions, unitDim) {
     if (!rangeCheck(unitDim, 0, dimensions - 1))
@@ -51,48 +49,48 @@ module.exports = class Vector {
   
   get dimensions() { return this.elements.length; }
   
-  get lengthSqr() { return sum(map(this, e => e * e)); }
+  get lengthSqr() { return Iterable.map(this, e => e * e).sum(); }
   
   get length() { return Math.sqrt(this.lengthSqr); }
   
-  get sum() { return aggregate(this, (a, b) => a + b); }
+  get sum() { return Iterable.aggregate(this, (a, b) => a + b); }
   
-  get product() { return aggregate(this, (a, b) => a * b); }
+  get product() { return Iterable.aggregate(this, (a, b) => a * b); }
   
   
   clone() { return new Vector(this.elements.slice(0)); }
   
-  negate() { return Vector.create(...map(this, e => -e)); }
+  negate() { return Vector.create(Iterable.map(this, e => -e)); }
   
   normalize() {
     let l = this.length;
     return ((l == 0) ? Vector.zero(this.dimensions)
-                     : Vector.create(...map(this, e => e / l)));
+                     : Vector.create(Iterable.map(this, e => e / l)));
   }
   
   
-  multiply(f) { return Vector.create(...map(this, e => e * f)); }
+  multiply(f) { return Vector.create(Iterable.map(this, e => e * f)); }
   
   
   add(...v) {
     v = Vector.toVector(v, true);
     if (this.dimensions != v.dimensions)
       throw makeIncompatibleVectorsError(this, v, "add");
-    return Vector.create(...zip(this, v, (a, b) => a + b));
+    return Vector.create(Iterable.zip(this, v, (a, b) => a + b));
   }
   
   subtract(...v) {
     v = Vector.toVector(v, true);
     if (this.dimensions != v.dimensions)
       throw makeIncompatibleVectorsError(this, v, "subtract");
-    return Vector.create(...zip(this, v, (a, b) => a - b));
+    return Vector.create(Iterable.zip(this, v, (a, b) => a - b));
   }
   
   dot(...v) {
     v = Vector.toVector(v, true);
     if (this.dimensions != v.dimensions)
       throw makeIncompatibleVectorsError(this, v, "dot");
-    return sum(zip(this, v, (a, b) => a * b));
+    return Iterable.zip(this, v, (a, b) => a * b).sum();
   }
   
   cross(...v) {

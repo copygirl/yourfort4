@@ -1,11 +1,11 @@
 "use strict";
 
-let iterable = require("./iterable");
+let Iterable = exports.Iterable = require("./Iterable");
 
 /** Extends the target object with all properties of the source objects. */
 let extend = exports.extend = function(target, ...sources) {
   for (let source of sources) {
-    let properties = iterable.concat(
+    let properties = Iterable.concat(
       Object.getOwnPropertyNames(source),
       Object.getOwnPropertySymbols(source));
     for (let property of properties) {
@@ -26,16 +26,16 @@ let extend = exports.extend = function(target, ...sources) {
 /** Implements the specified mixins (can be objects
  *  or classes) into the target class's prototype. */
 exports.implement = function(targetClass, ...mixins) {
-  extend(targetClass.prototype, ...iterable.map(mixins,
+  extend(targetClass.prototype, ...mixins.map(
     // If mixin is a function, it's likely a class
     // constructor, so use its prototype instead.
     e => ((typeof e == "function") ? e.prototype : e)));
   return targetClass;
 };
 
-/** Flattens an iterable object into an array recursively. */
+/** Flattens an Iterable object into an array recursively. */
 exports.flatten = function flatten(obj, array = [ ]) {
-  if (iterable.isIterable(obj))
+  if (Iterable.isIterable(obj))
     for (let element of obj)
       flatten(element, array);
   else array.push(obj);
@@ -71,6 +71,3 @@ exports.UnexpectedTypeError = class UnexpectedTypeError extends Error {
     super(str);
   }
 };
-
-// Export iterable functions through this module.
-extend(exports, iterable);

@@ -1,7 +1,7 @@
 "use strict";
 
 let Buffer = require("../Buffer");
-let { map }    = require("../../../common/utility");
+let { Iterable } = require("../../../common/utility");
 let { Matrix } = require("../../../common/veccy");
 
 module.exports = class SpriteRenderer {
@@ -32,7 +32,7 @@ module.exports = class SpriteRenderer {
     GFX.push();
     
     let scale     = Matrix.scale(...entity.size, 1);
-    let translate = Matrix.translation(...map(entity.pos, Math.round), 0);
+    let translate = Matrix.translation(...Iterable.map(entity.pos, Math.round), 0);
     
     GFX.viewMatrix = GFX.viewMatrix.multiply(scale).multiply(translate);
     GFX.program.uniforms.uMVMatrix.setf(GFX.viewMatrix);
