@@ -3,16 +3,16 @@
 let Collider = require("./Collider");
 
 
-let wallTest = function(p, d, i, wi, wj1, wj2, v) {
+let wallTest = function(p, d, i, wi, wj1, wj2, normal) {
   if (Math.abs(d[i]) < 0.0001) return null;
   let t = (wi - p[i]) / d[i];
   if ((t < 0) || (t > 1)) return null;
-  let pj = p[i ^ 1] * t;
-  if ((pj < wj1) || (pj > wj2)) return;
+  let pj = p[i ^ 1] + d[i ^ 1] * t;
+  if ((pj < wj1) || (pj > wj2)) return null;
   let hit = [ 0, 0 ];
   hit[i] = wi;
   hit[i ^ 1] = pj;
-  return [ hit, v ];
+  return { hit, normal, t };
 };
 
 

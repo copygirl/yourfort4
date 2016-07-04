@@ -10,7 +10,7 @@ module.exports = class Collider {
   update(entity) { throw new Error("Not implemented"); }
   
   // Cast a ray from starting point p into direction d against this Collider.
-  // Returns [ hit, normal ] or null if not hit.
+  // Returns { hit, normal, t } or null if not hit.
   ray(p, d) { throw new Error("Not implemented"); }
   
   // Returns a new Collider made up of of this Collider, expanded by the specified Collider.
