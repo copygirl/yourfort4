@@ -26,10 +26,6 @@ let Game = module.exports = class Game extends Main {
     this.client     = new Client(this);
     this.assets     = new Assets(this);
     this.graphics   = new Graphics(this, canvas, size, scale);
-    
-    // Using a web worker, we can avoid set-interval running at
-    // crippled speed when the tab is in the background. Justice!
-    this.worker = new Worker("worker.js");
   }
   
   get player() { return this.entities.get(this.client.ownId); }
@@ -40,9 +36,10 @@ let Game = module.exports = class Game extends Main {
       this.assets.load("game", () => {
         this.emit("ready");
         let interval = 1 / ups;
-        this.worker.postMessage(interval * 1000);
-        this.worker.addEventListener("message", () => this.update(interval));
-        this.client.connect();
+        setInterval(
+          this.update.bind(this, interval),
+          interval * 1000
+        );
       });
     });
   }

@@ -29,10 +29,9 @@ let copy = function(source, target) {
 console.log("Browserifying game.js ...");
 run("browserify --ignore lapack src/client/Game.js > public/game.js")
   .then(() => {
-    console.log("Copying worker.js ...");
-    return copy("src/client/worker.js", "public/worker.js");
+    console.log("Job done!");
   })
-  .catch((err) => {
+  .catch(err => {
     console.error(err.message);
     process.exit(1);
   });
