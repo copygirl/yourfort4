@@ -24,13 +24,19 @@ module.exports = implement(class Client {
     this.connected = false;
     this.ownId     = null;
     
+    this.entities = new Map();
     this.tracking = new Set();
     
     this.game.on("spawn", (entity) => {
-      if (entity.networked)
-        this.tracking.add(entity); });
+      if (!entity.networked) return;
+      this.entities.set(entity.networkId, entity);
+      this.tracking.add(entity);
+    });
     this.game.on("despawn", (entity) => {
-      this.tracking.delete(entity); });
+      if (!entity.networked) return;
+      this.entities.delete(entity.networkId);
+      this.tracking.delete(entity);
+    });
   }
   
   get loggedIn() { return (this.connected && (this.ownId != null)); }
