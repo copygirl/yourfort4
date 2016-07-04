@@ -10,6 +10,7 @@ let { implement, type, Iterable, UnexpectedTypeError } = require("../utility");
 let updateEntityCollider = function(entity) {
   if ((entity.main == null) || (entity.collider == null)) return;
   entity.main.physics.collision.update(entity);
+  entity.collider.update(entity);
 };
 
 
@@ -92,26 +93,40 @@ module.exports = class Physics {
   }
   
   update(delta) {
-    for (let entity of this.updating) {
-      entity.speed = entity.speed.add(entity.acc.multiply(delta));
-      if (entity.speed.lengthSqr < 0.001) break;
+    for (let entity of this.updating)
+      this.updateEntity(entity, delta);
+  }
+  
+  updateEntity(entity, delta) {
+    entity.speed = entity.speed.add(entity.acc.multiply(delta));
+    if (entity.speed.lengthSqr < 0.001) return;
+    
+    let speed = entity.speed.multiply(delta);
+    let mBox = entity.collider.boundingBox.clone();
+    if (speed[0] > 0) mBox.maxX += speed[0];
+    else mBox.minX += speed[0];
+    if (speed[1] > 0) mBox.maxY += speed[1];
+    else mBox.minY += speed[1];
+    
+    let solids = this.collision.entitiesInBBox(mBox)
+      .filter(e => (e.solid && (e !== entity))).toArray()
+      .sort((a, b) => entity.pos.distanceSqr(a.pos) -
+                      entity.pos.distanceSqr(b.pos));
+    
+    for (let solid of solids) {
+      let expandedCollider = solid.collider.expand(entity.collider);
+      let collision = expandedCollider.ray(entity.pos, speed);
+      if (collision == null) continue;
       
-      let speed = entity.speed.multiply(delta);
-      let mBox = entity.collider.boundingBox.clone();
-      if (entity.speed[0] > 0) mBox.maxX += speed[0];
-      else mBox.minX += speed[0];
-      if (entity.speed[1] > 0) mBox.maxY += speed[1];
-      else mBox.minY += speed[1];
-      
-      let solids = this.collision.entitiesInBBox(mBox)
-        .filter(e => (e.solid && (e !== entity))).toArray();
-      
-      if (solids.length == 0) {
-        entity.pos = entity.pos.add(speed);
-        entity.collider.update(entity);
-        this.collision.update(entity);
-      } else entity.speed = [ 0, 0 ];
+      entity.pos = collision.hit;
+      speed = speed.subtract(
+        Vector.create(...collision.normal)
+              .multiply(speed.dot(collision.normal)));
+      entity.speed = speed.divide(delta);
     }
+    
+    if (entity.speed.lengthSqr < 0.001) return;
+    entity.pos = entity.pos.add(speed);
   }
   
 };

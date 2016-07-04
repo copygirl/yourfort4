@@ -8,7 +8,7 @@ let wallTest = function(p, d, i, wi, wj1, wj2, normal) {
   let t = (wi - p[i]) / d[i];
   if ((t < 0) || (t > 1)) return null;
   let pj = p[i ^ 1] + d[i ^ 1] * t;
-  if ((pj < wj1) || (pj > wj2)) return null;
+  if ((pj <= wj1) || (pj >= wj2)) return null;
   let hit = [ 0, 0 ];
   hit[i] = wi;
   hit[i ^ 1] = pj;
@@ -42,8 +42,8 @@ let Box = module.exports = class Box extends Collider {
   }
   
   intersects(other) {
-    return ((this.minX <= other.maxX) && (this.maxX >= other.minX) &&
-            (this.minY <= other.maxY) && (this.maxY >= other.minY));
+    return ((this.minX < other.maxX) && (this.maxX > other.minX) &&
+            (this.minY < other.maxY) && (this.maxY > other.minY));
   }
   
   ray(p, d) {
