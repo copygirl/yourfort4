@@ -93,6 +93,12 @@ let Vector = module.exports = class Vector {
       : this.zip(v, "multiply", (a, b) => a * b));
   }
   
+  divide(...v) {
+    return (((v.length == 1) && (typeof v[0] == "number"))
+      ? this.map(e => e / v[0])
+      : this.zip(v, "divide", (a, b) => a / b));
+  }
+  
   dot(...v) {
     v = Vector.toVector(v, true);
     if (this.dimensions != v.dimensions)
