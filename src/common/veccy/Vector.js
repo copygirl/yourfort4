@@ -71,8 +71,6 @@ let Vector = module.exports = class Vector {
     return ((l == 0) ? Vector.zero(this.dimensions) : this.map(e => e / l));
   }
   
-  multiply(f) { return this.map(e => e * f); }
-  
   
   zip(v, what, func) {
     v = Vector.toVector(v, true);
@@ -88,6 +86,12 @@ let Vector = module.exports = class Vector {
   add(...v) { return this.zip(v, "add", (a, b) => a + b); }
   
   subtract(...v) { return this.zip(v, "subtract", (a, b) => a - b); }
+  
+  multiply(...v) {
+    return (((v.length == 1) && (typeof v[0] == "number"))
+      ? this.map(e => e * v[0])
+      : this.zip(v, "multiply", (a, b) => a * b));
+  }
   
   dot(...v) {
     v = Vector.toVector(v, true);
