@@ -117,6 +117,20 @@ let Vector = module.exports = class Vector {
                          (x * b) - (y * a));
   }
   
+  distanceSqr(...v) {
+    v = Vector.toVector(v, true);
+    if (this.dimensions != v.dimensions)
+      throw makeIncompatibleVectorsError(this, v, "distanceSqr");
+    return Iterable.zip(this, v, (a, b) => (a - b) * (a - b)).sum();
+  }
+  
+  distance(...v) {
+    v = Vector.toVector(v, true);
+    if (this.dimensions != v.dimensions)
+      throw makeIncompatibleVectorsError(this, v, "distance");
+    return Math.sqrt(Iterable.zip(this, v, (a, b) => (a - b) * (a - b)).sum());
+  }
+  
   
   [Symbol.iterator]() { return this.elements[Symbol.iterator](); }
   
