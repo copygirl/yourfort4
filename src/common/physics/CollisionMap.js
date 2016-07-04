@@ -52,8 +52,8 @@ module.exports = class CollisionMap {
   
   nodesForBBox(box) {
     return Iterable.of(function*() {
-      for (let x = (box.left >> NODES_SIZE); x <= (box.right >> NODES_SIZE); x++)
-        for (let y = (box.top >> NODES_SIZE); y <= (box.bottom >> NODES_SIZE); y++)
+      for (let x = (box.minX >> NODES_SIZE); x <= (box.maxX >> NODES_SIZE); x++)
+        for (let y = (box.minY >> NODES_SIZE); y <= (box.maxY >> NODES_SIZE); y++)
           yield `${ x },${ y }`;
     });
   }
